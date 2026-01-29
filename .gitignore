@@ -1,0 +1,15 @@
+/.git
+# IGNORE IN YOUR REPO /secrets
+
+# node
+/node_modules
+package-lock.json
+
+# lambda copy and paste
+/server/lambda/api
+/server/lambda/schemas
+/server/lambda/server
+/server/lambda/node_modules
+/server/lambda/sites
+/server/lambda/app.js
+
