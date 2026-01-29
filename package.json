@@ -3,7 +3,6 @@
 	"version": "1.0.0",
 	"description": "Awesomeness Multi-Site Server",
 	"author": "Scott Forte",
-	"private": true,
 	"type": "module",
 	"main": "start.js",
 	"repository": {
