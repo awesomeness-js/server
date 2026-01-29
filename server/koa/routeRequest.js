@@ -25,8 +25,6 @@ async function routeRequest(ctx, next){
 	
 	}
 
-	console.log(awesomenessRequest.awesomenessType, awesomenessRequest.pageRoute);
-
 
 	if(awesomenessRequest.awesomenessType === 'page'){
 

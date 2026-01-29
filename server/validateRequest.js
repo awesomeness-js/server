@@ -80,7 +80,7 @@ export default async (awesomenessRequest) => {
 
 			if(awesomenessConfig.debug){
 
-				console.log({ data });
+				console.log('Validate Request: (data) ', { data });
 			
 			}
 
