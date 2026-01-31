@@ -8,6 +8,8 @@ async function attachAwesomenessRequest(ctx, next) {
 
 	ctx.awesomenessRequest = await awesomenessNormalizeRequest({ req: ctx });
 
+	ctx.awesomenessRequest.log('Attached awesomenessRequest to Koa ctx');
+
 	const routes = awesomenessConfig.specialRoutes[ctx.awesomenessRequest.site] || [];
 
 	if(ctx.awesomenessRequest.awesomenessType === 'page'){

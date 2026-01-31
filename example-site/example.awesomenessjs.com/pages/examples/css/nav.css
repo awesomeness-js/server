@@ -1,0 +1,221 @@
+.main-nav {
+  background-color: #010816;
+  overflow: auto;
+  z-index: 3;
+  position: absolute;
+  width: 100%;
+  top: 62px;
+}
+
+.main{
+    padding-top: 137px;
+}
+
+.nav-container {
+  background-color: #010816;
+  color: #fff;
+  opacity: 1;
+  position: fixed;
+  right: 0;
+  top: -63px;
+  transition: all 420ms;
+  width: 100%;
+  z-index: 3;
+}
+
+.nav-container.showExtra{
+  top:0px;
+}
+
+.nav-logo {
+  cursor: pointer;
+  float: left;
+  font-size: 2em;
+  font-weight: 600;
+  height: 75px;
+  padding-top: 15px;
+  text-align: center;
+  width: 300px;
+}
+
+.nav-list {
+  float: right;
+  height: 75px;
+  margin: 0px;
+  padding: 25px 45px 25px 0px;
+}
+
+.app-size-p .nav-list,
+.app-size-t .nav-list{
+  width: 100%;
+  height: inherit;
+  padding-top: 0px;
+  display: none;
+}
+.app-size-p .nav-list.active,
+.app-size-t .nav-list.active{
+  display: block;
+}
+
+
+.app-size-p .nav-list li,
+.app-size-t .nav-list li{
+  width: 100%;
+  height: inherit;
+  text-align: right;
+  padding: 10px;
+}
+
+
+.nav-list li {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-bottom: solid 1px #00000000;
+  cursor: pointer;
+  display: block;
+  float: left;
+  font-size: 1.3em;
+  font-weight: 300;
+  margin-left: 30px;
+  padding-bottom: 3px;
+  transition: all 420ms;
+  position: relative;
+}
+
+.nav-list li:hover,
+.nav-sub-list li:hover,
+.nav-button:hover,
+.nav-logo:hover{
+  color:#ffab55;
+}
+
+.app-size-xl .nav-list li.active,
+.app-size-d .nav-list li.active{
+  border-bottom: solid 1px #0858e1;
+}
+
+.app-size-t .nav-list li,
+.app-size-p .nav-list li{
+  padding-right:45px;
+}
+
+.nav-button {
+  cursor: pointer;
+  float: right;
+  height: 75px;
+  padding: 19px 12px 19px 0px;
+  text-align: center;
+  width: 60px;
+  display: none;
+  font-size: 2.3em;
+}
+
+.app-size-p .nav-button,
+.app-size-t .nav-button{
+  display: block;
+}
+
+
+.nav-top {
+  position: absolute;
+  z-index: 3;
+  top: 0px;
+  width:100%;
+  display: block;
+  overflow: auto;
+  font-size: .85em;
+  padding: 13px 32px 13px 0px;
+  background-color: #0858e1;
+}
+
+.app-size-p .nav-top,
+.app-size-p .nav-call-to-action {
+  padding-right: 15px;
+}
+.app-size-p .nav-action{
+  padding-left: 15px;
+}
+
+
+.nav-action{
+  float: right;
+  background-color: #d92c2c;
+  padding: 10px 40px 10px 25px;
+  position: relative;
+  cursor: pointer;
+  transition: all 420ms;
+}
+.nav-action:hover{
+  background-color:#053587;
+}
+
+.nav-action i {
+    font-size: 1em;
+    float: right;
+    position: absolute;
+    top: 12px;
+    right: 13px;
+}
+.nav-call-to-action{
+  float: right;
+  padding: 10px 25px 10px 0px;
+}
+
+.nav-sub-list{
+  transition: all 420ms;
+  display: block;
+  width: 100%;
+  overflow: auto;
+  background-color:#182a4d;
+  margin-bottom: 0px;
+  top: 0px;
+  position: absolute;
+  padding-right: 10px;
+}
+
+.nav-sub-list li{
+  cursor: pointer;
+  z-index: 0;
+  transition: all 420ms;
+  display: inline-block;
+  overflow: auto;
+  background-color: #182a4d;
+  float: left;
+  padding: 20px 22px;
+}
+
+.nav-sub-list.active{
+  top: 120px;
+}
+
+.app-size-t .nav-sub-list,
+.app-size-p .nav-sub-list{
+  top: -235px;
+}
+
+.app-size-t .nav-sub-list li,
+.app-size-p .nav-sub-list li{
+  padding-right: 50px;
+  text-align: right;
+  width: 100%;
+}
+
+.app-size-p .nav-sub-list.active,
+.app-size-t .nav-sub-list.active{
+  top: 415px;
+}
+
+.app-size-p .nav-list li i,
+.app-size-t .nav-list li i {
+  position: absolute;
+  right: 4px;
+  top: 14px;
+}
+
+.nav-list li i {
+  position: relative;
+}

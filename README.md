@@ -8,6 +8,7 @@ The `./awesomeness/` folder and you can customize the location by modifying the 
 
 [@awesomeness-js/app-template](https://github.com/awesomeness-js/app-template)
 
+# Underlying Request Flow
 
 ## Pre Routing
 - start
@@ -18,7 +19,7 @@ The `./awesomeness/` folder and you can customize the location by modifying the 
 - routeRequest
 
 ## Routing
-- needs to be valid route
+- needs to be valid route for [page, api]
   - /[^a-zA-Z0-9\/\_\-]/ -> make sure there is no dots in the path -> 404
 
 ## API Routing ( needs awesomenessType in post body `api`)
@@ -38,16 +39,34 @@ The `./awesomeness/` folder and you can customize the location by modifying the 
 - method must be get or 405 is thrown
 - /test -> returns awesomeness is working
 - routes to staticFiles
+- awesomenessRequest.awesomenessType is not set in POST body
+- request is treated as a static file request
+- static file served is it exists in the public folder
+  - site specific first
+  - then common files
 
+If a public static file is not found
+- public/index.html is served
+- You DO NOT need your own public/index.html file
+  - The awesomeness-ui framework provides a default one
+  - this calls app.init()
+
+# From the Browser 
+
+## What happens
+
+1. User visits a page
+- Server receives request
 
 
 ## Static Files
 - site specific files first
-  - /${awesomenessConfig.siteURL}/${awesomenessRequest.site}/public/index.html
+  - /${awesomenessConfig.siteDir__URL}/${awesomenessRequest.site}/public/index.html
 - then common files
-  - /${awesomenessConfig.commonPublicDir}/${awesomenessRequest.site}/public/index.html
+  - [/${awesomenessConfig.commonPublicDir__URL}/${awesomenessRequest.site}/public/index.html](/example-site/example.awesomenessjs.com/public/index.html)
   
-each call `app.init`
+[index.html](/example-site/example.awesomenessjs.com/public/index.html)
+
 
 
 ## License

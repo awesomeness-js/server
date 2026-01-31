@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { componentDependencies } from "./componentDependencies.js";
+import { componentDependencies } from "../ui/componentDependencies.js";
 import pageInfo from "./pageInfo.js";
 import { each, md5, combineFiles } from "@awesomeness-js/utils";
 import { getConfig } from "../config.js";
@@ -23,11 +23,11 @@ export default async function fetchPage(
 
 	const awesomenessConfig = getConfig();
 
-	// normalize siteURL (expected to point at the /sites/ directory)
+	// normalize siteDir__URL (expected to point at the /sites/ directory)
 	const sitesRootPath =
-		awesomenessConfig.siteURL instanceof URL
-			? fileURLToPath(awesomenessConfig.siteURL)
-			: awesomenessConfig.siteURL;
+		awesomenessConfig.siteDir__URL instanceof URL
+			? fileURLToPath(awesomenessConfig.siteDir__URL)
+			: awesomenessConfig.siteDir__URL;
 
 	const sitePagesRoot = path.join(sitesRootPath, awesomenessRequest.site, "pages");
 

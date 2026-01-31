@@ -1,0 +1,17 @@
+/*
+these classes are loaded dynamically ...
+If a class can be re-used it is better to be created in /api/ui/common-css/
+*/
+.blog-topic{
+	position: relative;
+	border: solid 1px var(--neutral-200);
+	text-align: center;
+}
+
+.blog-topic-image{
+	width: 250px;
+	height: 200px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+}

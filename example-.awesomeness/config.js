@@ -7,19 +7,19 @@ import checkSession from './checkSession.js';
 import applicationMap from './applicationMap.js';
 
 export default {
-
-	configURL: new URL(import.meta.url),
-	siteURL: new URL("../sites/", import.meta.url),
-	commonPublicDir: new URL("../awesomeness-ui/core/public/", import.meta.url),
+	
+	siteDir__URL: new URL("../sites/", import.meta.url),
+	commonPublicDir__URL: new URL("../awesomeness-ui/core/public/", import.meta.url),
+	commonApiDir__URL: new URL("../api/", import.meta.url),
 
 	componentLocations: (awesomenessRequest) => {
 
-		const siteURL = new URL(`../sites/${awesomenessRequest.site}/`, import.meta.url);
+		const siteDir__URL = new URL(`../sites/${awesomenessRequest.site}/`, import.meta.url);
 
 		return [
 
 			// first match wins (site first)
-			new URL('./components/', siteURL),
+			new URL('./components/', siteDir__URL),
 
 			// last item is the default
 			new URL('../awesomeness-ui/components/', import.meta.url),

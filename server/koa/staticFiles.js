@@ -13,8 +13,8 @@ const staticFiles = async (ctx, next) => {
 	} = ctx.awesomenessRequest;
 
 	const {
-		siteURL, 
-		commonPublicDir 
+		siteDir__URL, 
+		commonPublicDir__URL 
 	} = getConfig();
 
 	if (method !== "GET" && method !== "HEAD") {
@@ -25,16 +25,16 @@ const staticFiles = async (ctx, next) => {
 	
 	}
 
-	if (!(siteURL instanceof URL) || !(commonPublicDir instanceof URL)) {
+	if (!(siteDir__URL instanceof URL) || !(commonPublicDir__URL instanceof URL)) {
 
-		ctx.throw(500, new Error("Config must provide siteURL and commonPublicDir as file: URLs"));
+		ctx.throw(500, new Error("Config must provide siteDir__URL and commonPublicDir__URL as file: URLs"));
 		
 		return;
 	
 	}
 
-	const sitesRoot = fileURLToPath(siteURL);
-	const commonRoot = fileURLToPath(commonPublicDir);
+	const sitesRoot = fileURLToPath(siteDir__URL);
+	const commonRoot = fileURLToPath(commonPublicDir__URL);
 
 	const domainRoot = path.join(sitesRoot, site, "public");
 

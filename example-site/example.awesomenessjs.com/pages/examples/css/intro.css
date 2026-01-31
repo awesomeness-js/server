@@ -1,0 +1,67 @@
+.introPage{
+  background-image: url('/tools/images/awesomeness.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.landing-area {
+  overflow: auto;
+  position: relative;
+  width: 40%;
+  text-align: center;
+  color: #fff;
+}
+
+.app-size-xl .landing-area { width: 60%; }
+.app-size-d .landing-area { width: 60%; }
+.app-size-t .landing-area { width: 70%; }
+.app-size-p .landing-area { width: 95%; }
+
+.landing-area h1{
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.landing-area h2{
+  margin-bottom: 10px;
+  font-weight: 300;
+  font-size: 1.4em;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+.landing-area button {
+  width: 46%;
+  margin: 2%;
+}
+
+.landing-area button i{
+  text-align: center;
+  font-size: 2em;
+  position: relative;
+  display: block;
+  width: 100%;
+  padding-bottom: 23px;
+  right:auto;
+}
+
+.landing-area .a-button {
+  background-color: #fff;
+  color: #13408d;
+}
+
+.landing-area .b-button {
+  background-color: #13408d;
+  color: #fff;
+}
+
+.divider{
+  width: 50%;
+  height: 1px;
+  display: block;
+  margin-left: 25%;
+  background-color: #fff;
+  margin: 19px 25%;
+}

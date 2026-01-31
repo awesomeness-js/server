@@ -18,11 +18,11 @@ export default async function pageInfo(awesomenessRequest, { page = null } = {})
 
 	const slug = page.split("/").pop().split(".")[0].split("?")[0];
 
-	// awesomenessConfig.siteURL points at the /sites/ directory (as a URL)
+	// awesomenessConfig.siteDir__URL points at the /sites/ directory (as a URL)
 	const sitesRootPath =
-		awesomenessConfig.siteURL instanceof URL
-			? fileURLToPath(awesomenessConfig.siteURL)
-			: awesomenessConfig.siteURL;
+		awesomenessConfig.siteDir__URL instanceof URL
+			? fileURLToPath(awesomenessConfig.siteDir__URL)
+			: awesomenessConfig.siteDir__URL;
 
 	const siteRootPath = path.join(sitesRootPath, awesomenessRequest.site);
 	const pagesRootPath = path.join(siteRootPath, "pages");

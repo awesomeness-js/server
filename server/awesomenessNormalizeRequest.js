@@ -7,7 +7,6 @@ async function awesomenessNormalizeRequest({
 } = {}) {
 
 	const awesomenessConfig = getConfig();
-
 	
 	const domain = req.headers.host;
 
@@ -77,6 +76,25 @@ async function awesomenessNormalizeRequest({
 	
 	}
 
+	const startTime = performance.now();
+
+	const log = (message, data = {}) => {
+
+		const timeElapsed = performance.now() - startTime;
+
+		if(awesomenessConfig.debug){
+
+			awesomenessRequest.logData.push({
+				timestamp: new Date().toISOString(),
+				timeElapsed,
+				message,
+				data
+			});
+
+		}
+	
+	};
+
 	const awesomenessRequest = {
 
 		// request info
@@ -111,7 +129,10 @@ async function awesomenessNormalizeRequest({
 		urlParams,
 
 		// just because
-		_RAW: req
+		_RAW: req,
+		
+		log,
+		logData: []
 	};
 
 	awesomenessRequest.reRoute = (destination)=>{

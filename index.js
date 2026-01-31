@@ -1,6 +1,7 @@
 import checkAccess from "./server/checkAccess.js";
 import fetchPage from "./server/fetchPage.js";
 import reRoute from "./server/reRoute.js";
+import { componentDependencies } from "./ui/componentDependencies.js";
 import start from "./start.js";
 import { init, getConfig } from "./config.js";
 
@@ -10,16 +11,18 @@ export {
 	checkAccess,
 	reRoute,
 	fetchPage,
-	start
+	start,
+	componentDependencies
 };
 
 const server = {
 	checkAccess,
+	componentDependencies,
 	fetchPage,
 	getConfig,
 	init,
 	reRoute,
-	start
+	start,
 };
 
 export default server;
