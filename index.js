@@ -4,6 +4,7 @@ import reRoute from "./server/reRoute.js";
 import { componentDependencies } from "./ui/componentDependencies.js";
 import start from "./start.js";
 import { init, getConfig } from "./config.js";
+import getMD from "./server/getMD.js";
 
 export { 
 	init,
@@ -12,7 +13,8 @@ export {
 	reRoute,
 	fetchPage,
 	start,
-	componentDependencies
+	componentDependencies,
+	getMD
 };
 
 const server = {
@@ -23,6 +25,7 @@ const server = {
 	init,
 	reRoute,
 	start,
+	getMD
 };
 
 export default server;

@@ -17,7 +17,8 @@ export default async function reRoute({
 		};
 	
 	}
-	
+
+
 	if(!awesomenessRequest.reRoutes){
 
 		awesomenessRequest.reRoutes = [];
