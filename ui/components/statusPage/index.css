@@ -1,0 +1,120 @@
+/* All styles scoped to .status-page and only using existing CSS variables (e.g., --sky-500, --violet-500, --slate-950). */
+
+.status-page {
+  /* layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: min(70vh, 560px);
+  padding: 36px 22px 28px;
+  margin: min(12vh, 120px) auto;
+  text-align: center;
+  width: min(720px, 92vw);
+
+  /* card look */
+  position: relative;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04)) padding-box;
+  border: 1px solid color-mix(in oklab, white 14%, transparent);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  backdrop-filter: saturate(160%) blur(10px);
+  color: var(--slate-50);
+  isolation: isolate;
+}
+
+.status-page::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  z-index: -1;
+  background:
+    radial-gradient(80% 60% at 20% 0%, color-mix(in oklab, var(--sky-500) 32%, transparent), transparent 65%),
+    radial-gradient(70% 50% at 100% 10%, color-mix(in oklab, var(--violet-500) 28%, transparent), transparent 60%),
+    var(--slate-950);
+  filter: saturate(110%);
+}
+
+/* Headline */
+.status-page h1 {
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  font-size: clamp(48px, 14vw, 120px);
+  background:
+    conic-gradient(from 220deg, var(--sky-400), var(--violet-400), var(--sky-400)) text;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 18px color-mix(in oklab, var(--sky-500) 25%, transparent));
+}
+
+/* Message */
+.status-page p {
+  margin: 2px 0 18px;
+  color: var(--slate-400);
+  font-size: clamp(14px, 1.7vw, 18px);
+}
+
+/* CTA */
+.status-page .btn-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 18px;
+  gap: .5ch;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .01em;
+
+  color: var(--slate-50);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)),
+    linear-gradient(90deg, color-mix(in oklab, var(--sky-500) 32%, transparent), color-mix(in oklab, var(--violet-500) 32%, transparent));
+  border: 1px solid color-mix(in oklab, white 14%, transparent);
+  box-shadow: 0 4px 18px rgba(0,0,0,.2);
+  transition: transform .15s ease, box-shadow .2s ease, filter .15s ease, background .25s ease;
+}
+.status-page .btn-home:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0,0,0,.28);
+  filter: saturate(120%);
+}
+.status-page .btn-home:active { transform: translateY(0) }
+.status-page .btn-home:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--slate-950),
+    0 0 0 6px color-mix(in oklab, var(--sky-500) 45%, transparent);
+}
+
+/* 404 variant */
+.status-page.status-page-404 p {
+  font-size: clamp(15px, 1.9vw, 20px);
+}
+
+/* Generic variant trims the gradient headline */
+.status-page.status-page-generic h1 {
+  background: linear-gradient(180deg, currentColor, currentColor) text;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: currentColor;
+  filter: none;
+}
+
+/* Compact on very small screens */
+@media (max-width: 420px){
+  .status-page { padding: 26px 16px 20px; border-radius: 16px; }
+  .status-page .btn-home { width: 100% }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .status-page .btn-home { transition: none }
+}
