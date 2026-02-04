@@ -9,7 +9,6 @@ This product includes software developed by third parties.
 
 - busboy (MIT License)
 - koa (MIT License)
-- koa-compress (MIT License)
+- koa-compress (MIT Licendse)d
 - koa-send (MIT License)
 - ws (MIT License)
-- zlib (zlib License)

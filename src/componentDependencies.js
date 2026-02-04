@@ -82,11 +82,11 @@ export default function componentDependencies(allComponents, {
 			
 			});
 
-			console.log({
-				"import.meta.url =": import.meta.url,
-				component,
-				candidateRoots 
-			});
+			// console.log({
+			// 	"import.meta.url =": import.meta.url,
+			// 	component,
+			// 	candidateRoots 
+			// });
 
 			let allFiles;
 			let chosenRoot;
