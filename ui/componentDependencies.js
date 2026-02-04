@@ -58,7 +58,6 @@ function componentDependencies(allComponents, {
 
 				// baseUrl should point at a directory; we resolve component under it
 				const componentUrl = new URL(`./${component}/`, baseUrl);
-
         
 				return path.resolve(urlToFsPath(componentUrl));
 			
@@ -66,6 +65,10 @@ function componentDependencies(allComponents, {
 
 			let allFiles;
 			let chosenRoot;
+
+			console.log('test candidateRoots', candidateRoots);
+			let lastErr;
+
 
 			for (const root of candidateRoots) {
 
@@ -75,14 +78,24 @@ function componentDependencies(allComponents, {
 						dir: root,
 						ignore 
 					});
+
 					chosenRoot = root;
+
 					break; // first match wins
 				
-				} catch {
+				} catch(e) {
+
 					// try next
+					lastErr = e;
+					console.error("getAllFiles failed for root:", root, e);
+				
 				}
 			
 			}
+
+
+			console.log('chosenRoot', chosenRoot);
+
 
 			if (!allFiles) {
 
@@ -90,6 +103,7 @@ function componentDependencies(allComponents, {
 					message: "component does not exist (no location matched)",
 					component,
 					tried: candidateRoots,
+					cause: lastErr?.message ?? lastErr,
 				};
 			
 			}
