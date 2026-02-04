@@ -35,7 +35,7 @@ export default function componentDependencies(allComponents, {
 	componentLocations = [],
 	namespace = "ui",
 	showDetails = false,
-	ignore = [ "*.css.js", "*.css.php" ],
+	ignore = [ "*.css.js" ],
 } = {}) {
 
 	if (!Array.isArray(componentLocations) || componentLocations.length === 0) {
@@ -144,7 +144,7 @@ export default function componentDependencies(allComponents, {
 
 				try {
 
-					const fileContent = readFileSync(file, "utf-8");
+					const fileContent = readFileSync(path.join(chosenRoot, file), "utf-8");
 					const lines = fileContent.split("\n");
 					let fileWithImportsStripped = "";
 
