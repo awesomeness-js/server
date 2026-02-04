@@ -1,11 +1,13 @@
-import { getConfig } from "../../config.js";
+import getConfig from "../getConfig.js";
 
-export function handleWsMessage({
+export default function handleWsMessage({
 	socket, 
 	raw
 }) {
 
+
 	const awesomenessConfig = getConfig();
+
 
 	let msg;
 

@@ -1,4 +1,4 @@
-function finalFormat(awesomenessRequest, ctx){
+export default function finalFormat(awesomenessRequest, ctx){
 
 	if(!ctx.body.meta){
 
@@ -29,6 +29,3 @@ function finalFormat(awesomenessRequest, ctx){
 	return;
 
 }
-
-export { finalFormat };
-export default finalFormat;

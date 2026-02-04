@@ -1,6 +1,6 @@
 import specialPaths from './specialPaths.js';
 import fetchPage from './fetchPage.js';
-import { getConfig } from "../config.js";
+import getConfig from "./getConfig.js";
 
 export default async function reRoute({
 	goToPage, 

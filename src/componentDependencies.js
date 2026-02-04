@@ -31,7 +31,7 @@ function extractUiFirstParts(str) {
 
 }
 
-function componentDependencies(allComponents, {
+export default function componentDependencies(allComponents, {
 	componentLocations = [],
 	namespace = "ui",
 	showDetails = false,
@@ -305,5 +305,3 @@ function componentDependencies(allComponents, {
 	return out;
 
 }
-
-export { componentDependencies };

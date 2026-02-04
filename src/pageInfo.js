@@ -1,10 +1,10 @@
-import { getConfig } from "../config.js";
+import getConfig from "./getConfig.js";
 
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import { existsSync } from "fs";
 import { promises as fs } from "fs";
-import { resolveRealCasePath } from "./resolveRealCasePath.js";
+import resolveRealCasePath from "./resolveRealCasePath.js";
 
 export default async function pageInfo(awesomenessRequest, { page = null } = {}) {
 

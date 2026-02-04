@@ -2,15 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import send from 'koa-send';
 import { fileURLToPath } from "node:url";
-import { getConfig } from '../../config.js';
+import getConfig from "../getConfig.js";
 
-const staticFiles = async (ctx, next) => {
+export default async function staticFiles(ctx, next) {
 
 	const {
 		method, 
 		path: reqPath, 
 		site 
 	} = ctx.awesomenessRequest;
+
 
 	const {
 		siteDir__URL, 
@@ -92,6 +93,4 @@ const staticFiles = async (ctx, next) => {
 	
 	}
 
-};
-
-export { staticFiles };
+}

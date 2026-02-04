@@ -27,3 +27,8 @@ export function getConfig() {
 	return _config;
 
 }
+
+export default {
+	init,
+	getConfig
+};

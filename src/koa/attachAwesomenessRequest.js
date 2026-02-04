@@ -1,8 +1,8 @@
 import awesomenessNormalizeRequest  from '../awesomenessNormalizeRequest.js';
 import specialPaths from '../specialPaths.js';
-import { getConfig } from "../../config.js";
+import getConfig from "../getConfig.js";
 
-async function attachAwesomenessRequest(ctx, next) {
+export default async function attachAwesomenessRequest(ctx, next) {
 	
 	const awesomenessConfig = getConfig();
 
@@ -21,6 +21,3 @@ async function attachAwesomenessRequest(ctx, next) {
 	await next();
 	
 }
-
-export { attachAwesomenessRequest };
-export default attachAwesomenessRequest;

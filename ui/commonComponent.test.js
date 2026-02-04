@@ -1,4 +1,4 @@
-import { componentDependencies } from './componentDependencies.js';
+import componentDependencies from '../src/componentDependencies.js';
 import { expect, test } from 'vitest';
 
 test('component test', () => {

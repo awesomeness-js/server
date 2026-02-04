@@ -10,7 +10,10 @@
 		"url": "git+https://github.com/awesomeness-js/server.git"
 	},
 	"scripts": {
-		"test": "vitest"
+		"test": "vitest",
+		"prebuild": "node ./build/build.js",
+		"build": "tsc && npm run postBuild",
+		"postBuild": "node ./build/postBuild.js"
 	},
 	"exports": {
 		".": {

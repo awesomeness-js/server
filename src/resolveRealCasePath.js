@@ -5,7 +5,7 @@ import path from "path";
  * Case-insensitive real path resolver.
  * Works correctly on Windows, macOS, and Linux/Docker.
  */
-export function resolveRealCasePath(inputPath, returnAbsolute = false) {
+export default function resolveRealCasePath(inputPath, returnAbsolute = false) {
 
 	if (!inputPath) return null;
 

@@ -1,4 +1,4 @@
-const errorHandler = async (ctx, next) => {
+export default async function errorHandler(ctx, next){
 	
 	try {
 
@@ -27,6 +27,6 @@ const errorHandler = async (ctx, next) => {
 	
 	}
 
-};
+}
 
-export { errorHandler };
+;

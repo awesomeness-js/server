@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws";
-import { handleWsMessage } from "./handlers.js";
+import handleWsMessage from "./handlers.js";
 
-export function attachWs(server, path = "/ws") {
+export default function attachWs(server, path = "/ws") {
 
 	// noServer mode so we own upgrades
 	const wss = new WebSocketServer({ noServer: true });

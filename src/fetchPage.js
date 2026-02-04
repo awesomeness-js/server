@@ -1,10 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { componentDependencies } from "../ui/componentDependencies.js";
+import componentDependencies from "./componentDependencies.js";
 import pageInfo from "./pageInfo.js";
 import { each, md5, combineFiles } from "@awesomeness-js/utils";
-import { getConfig } from "../config.js";
+import getConfig from "./getConfig.js";
 
 const componentNamespace = "ui";
 const pageNamespaceBase = `app.pages`;

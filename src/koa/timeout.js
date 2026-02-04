@@ -1,5 +1,5 @@
 // Timeout middleware
-const timeout = (ms) => {
+export default function timeout(ms) {
 
 	return async (ctx, next) => {
 
@@ -37,6 +37,6 @@ const timeout = (ms) => {
 	
 	};
 
-};
+}
 
-export { timeout };
+;

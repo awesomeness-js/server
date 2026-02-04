@@ -1,4 +1,4 @@
-import { getConfig } from "../config.js";
+import getConfig from "./getConfig.js";
 import applicationMap from './applicationMap.js';
 import reRoute from './reRoute.js';
 

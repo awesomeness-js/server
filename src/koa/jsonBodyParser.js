@@ -136,7 +136,7 @@ const parseMultipart = (req, limit = 10 * 1024 * 1024) => {
 
 
 // ---------- middleware ----------
-const jsonBodyParser = async (ctx, next) => {
+export default async function jsonBodyParser(ctx, next) {
 
 	const method = ctx.method;
 	const isJson =
@@ -167,6 +167,6 @@ const jsonBodyParser = async (ctx, next) => {
 
 	await next();
 
-};
+}
 
-export { jsonBodyParser };
+;

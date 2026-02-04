@@ -1,6 +1,6 @@
 import { clean } from '@awesomeness-js/utils';
 import checkAccess from './checkAccess.js';
-import { getConfig } from "../config.js";
+import getConfig from "./getConfig.js";
 
 export default async (awesomenessRequest) => {
 

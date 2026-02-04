@@ -1,4 +1,4 @@
-const cors = async (ctx, next) => {
+export default async function cors(ctx, next){
 
 	// Set CORS headers
 	ctx.set('Access-Control-Allow-Origin', '*');
@@ -17,6 +17,4 @@ const cors = async (ctx, next) => {
 	// Proceed to the next middleware
 	await next();
 	
-};
-
-export { cors };
+}

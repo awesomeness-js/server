@@ -5,11 +5,11 @@ import { fileURLToPath, pathToFileURL } from "url";
 import fetchPage from "../fetchPage.js";
 import pageInfo from "../pageInfo.js";
 import validateRequest from "../validateRequest.js";
-import { staticFiles } from "./staticFiles.js";
+import staticFiles from "./staticFiles.js";
 import finalFormat from "./finalFormat.js";
-import { getConfig } from "../../config.js";
+import getConfig from "../getConfig.js";
 
-async function routeRequest(ctx, next) {
+export default async function routeRequest(ctx, next) {
 
 	const awesomenessConfig = getConfig();
 
@@ -332,5 +332,3 @@ async function routeRequest(ctx, next) {
 	}
 
 }
-
-export { routeRequest };
