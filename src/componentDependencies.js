@@ -11,7 +11,16 @@ function urlToFsPath(u) {
 	
 	}
 
-	return fileURLToPath(u);
+	let p = fileURLToPath(u);
+
+	// ✅ Guard against malformed file URLs on Linux producing "usr/..." instead of "/usr/..."
+	if (path.sep === "/" && !p.startsWith("/")) {
+
+		p = "/" + p;
+	
+	}
+
+	return p;
 
 }
 
@@ -61,6 +70,11 @@ export default function componentDependencies(allComponents, {
         
 				return path.resolve(urlToFsPath(componentUrl));
 			
+			});
+
+			console.log({
+				component,
+				candidateRoots 
 			});
 
 			let allFiles;
