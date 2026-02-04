@@ -65,10 +65,7 @@ function componentDependencies(allComponents, {
 
 			let allFiles;
 			let chosenRoot;
-
-			console.log('test candidateRoots', candidateRoots);
 			let lastErr;
-
 
 			for (const root of candidateRoots) {
 
@@ -87,14 +84,11 @@ function componentDependencies(allComponents, {
 
 					// try next
 					lastErr = e;
-					console.error("getAllFiles failed for root:", root, e);
 				
 				}
 			
 			}
 
-
-			console.log('chosenRoot', chosenRoot);
 
 
 			if (!allFiles) {
