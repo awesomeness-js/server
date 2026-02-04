@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import { each, getAllFiles } from "@awesomeness-js/utils";
 import { readFileSync } from "fs";
 
+
 function urlToFsPath(u) {
 
 	if (!(u instanceof URL)) {
@@ -11,14 +12,23 @@ function urlToFsPath(u) {
 	
 	}
 
-	let p = fileURLToPath(u);
+	// If it’s a real file URL, use fileURLToPath
+	if (u.protocol === "file:") {
 
-	// ✅ Guard against malformed file URLs on Linux producing "usr/..." instead of "/usr/..."
-	if (path.sep === "/" && !p.startsWith("/")) {
+		let p = fileURLToPath(u);
 
-		p = "/" + p;
+		// Guard against malformed file URLs on POSIX producing "usr/..." instead of "/usr/..."
+		if (path.sep === "/" && !p.startsWith("/")) p = "/" + p;
+
+		return p;
 	
 	}
+
+	// Otherwise, treat it as a path-like URL and use pathname
+	// (common with some runtimes/bundlers)
+	let p = decodeURIComponent(u.pathname || "");
+
+	if (path.sep === "/" && p && !p.startsWith("/")) p = "/" + p;
 
 	return p;
 
@@ -73,6 +83,7 @@ export default function componentDependencies(allComponents, {
 			});
 
 			console.log({
+				"import.meta.url =": import.meta.url,
 				component,
 				candidateRoots 
 			});
