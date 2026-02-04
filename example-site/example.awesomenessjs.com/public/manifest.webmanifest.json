@@ -1,8 +1,0 @@
-{
-	"name": "Awesomeness PWA",
-	"short_name": "Awesomeness PWA",
-	"start_url": "https://demo.awesomenessjs.com",
-	"display": "standalone",
-	"background_color": "#000000",
-	"description": "Awesomeness PWA"
-}
