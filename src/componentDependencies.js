@@ -4,7 +4,6 @@ import { each, getAllFiles } from "@awesomeness-js/utils";
 import { readFileSync } from "fs";
 import getConfig from "./getConfig.js";
 
-
 function urlToFsPath(u) {
 
 	if (!(u instanceof URL)) {
@@ -51,12 +50,15 @@ function extractUiFirstParts(str) {
 
 }
 
-export default function componentDependencies(allComponents, {
-	componentLocations = [],
-	namespace = "ui",
-	showDetails = false,
-	ignore = [ "*.css.js" ],
-} = {}) {
+export default function componentDependencies(
+	allComponents,
+	{
+		componentLocations = [],
+		namespace = "ui",
+		showDetails = false,
+		ignore = [ "*.css.js" ],
+	} = {}
+) {
 
 	const awesomenessConfig = getConfig();
 
@@ -80,16 +82,11 @@ export default function componentDependencies(allComponents, {
 
 				// baseUrl should point at a directory; we resolve component under it
 				const componentUrl = new URL(`./${component}/`, baseUrl);
-        
+
+				
 				return path.resolve(urlToFsPath(componentUrl));
 			
 			});
-
-			// console.log({
-			// 	"import.meta.url =": import.meta.url,
-			// 	component,
-			// 	candidateRoots 
-			// });
 
 			let allFiles;
 			let chosenRoot;
@@ -99,25 +96,23 @@ export default function componentDependencies(allComponents, {
 
 				try {
 
+					// IMPORTANT: pass root so getAllFiles returns paths relative to the scan root
 					allFiles = getAllFiles(".", {
 						dir: root,
-						ignore 
+						root,
+						ignore,
 					});
 
 					chosenRoot = root;
-
 					break; // first match wins
 				
-				} catch(e) {
+				} catch (e) {
 
-					// try next
 					lastErr = e;
 				
 				}
 			
 			}
-
-
 
 			if (!allFiles) {
 
@@ -131,48 +126,51 @@ export default function componentDependencies(allComponents, {
 			}
 
 			if (
-				awesomenessConfig.debug_componentDependencies
-				&& Array.isArray(awesomenessConfig.debug_componentDependencies)
-				&& awesomenessConfig.debug_componentDependencies.includes(component)
+				awesomenessConfig.debug_componentDependencies &&
+				Array.isArray(awesomenessConfig.debug_componentDependencies) &&
+				awesomenessConfig.debug_componentDependencies.includes(component)
 			) {
 
 				console.log("[awesomenessConfig.debug componentDependencies] chosenRoot:", chosenRoot);
 				console.log("[awesomenessConfig.debug componentDependencies] allFiles count:", allFiles.length);
 				console.log("[awesomenessConfig.debug componentDependencies] first 50 files:", allFiles.slice(0, 50));
-				console.log("[awesomenessConfig.debug componentDependencies] any non-string:", allFiles.some((f) => typeof f !== "string"));
-				console.log("[awesomenessConfig.debug componentDependencies] any absolute:", allFiles.some((f) => path.isAbsolute(f)));
-
+				console.log(
+					"[awesomenessConfig.debug componentDependencies] any non-string:",
+					allFiles.some((f) => typeof f !== "string")
+				);
+				console.log(
+					"[awesomenessConfig.debug componentDependencies] any absolute:",
+					allFiles.some((f) => path.isAbsolute(f))
+				);
+			
 			}
 
 			allFiles.forEach((file) => {
 
 				const normalizedPath = path.normalize(file);
-				const pathSegments = normalizedPath.split(path.sep);
 
-				const variableIndex = pathSegments.indexOf(component);
-
-				let fileNameFull = pathSegments[pathSegments.length - 1];
+				const fileNameFull = path.basename(normalizedPath);
 				const fileTypeArr = fileNameFull.split(".");
-				const fileType = fileTypeArr[fileTypeArr.length - 1];
+				const fileType = fileTypeArr[fileTypeArr.length - 1].toLowerCase();
 				const fileName = fileTypeArr.slice(0, -1).join(".");
 
 				out[component] = out[component] || {};
 				out[component][fileType] = out[component][fileType] || {};
 
-				let arrAfterComponent = pathSegments.slice(variableIndex + 1);
-
-				arrAfterComponent.pop();
+				// Build tail from the file's relative directory (NOT by searching for `component` in the path)
+				const dir = path.dirname(normalizedPath);
+				const dirParts = dir === "." ? [] : dir.split(path.sep);
 
 				let tail = "";
 
 				if (fileType === "js" || fileType === "css") {
 
-					if (arrAfterComponent.length > 0) {
+					if (dirParts.length > 0) {
 
 						tail =
-              fileName === "index"
-              	? "." + arrAfterComponent.join(".")
-              	: `.${arrAfterComponent.join(".")}.${fileName}`;
+							fileName === "index"
+								? "." + dirParts.join(".")
+								: `.${dirParts.join(".")}.${fileName}`;
 					
 					} else {
 
@@ -186,7 +184,10 @@ export default function componentDependencies(allComponents, {
 
 				try {
 
-					const fileContent = readFileSync(path.join(chosenRoot, file), "utf-8");
+					// readFileSync must use chosenRoot + relative file path
+					const filePath = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
+					const fileContent = readFileSync(filePath, "utf-8");
+
 					const lines = fileContent.split("\n");
 					let fileWithImportsStripped = "";
 
@@ -225,7 +226,9 @@ export default function componentDependencies(allComponents, {
 
 								if (imports.length > 1) {
 
-									const importComponents = imports[1].split(",").map((c) => c.trim());
+									const importComponents = imports[1]
+										.split(",")
+										.map((c) => c.trim());
 
 									importComponents.forEach((importComponent) => {
 
@@ -243,15 +246,17 @@ export default function componentDependencies(allComponents, {
 							}
 						
 						} else if (
-							line.startsWith("// awesomeness import") 
-							|| line.startsWith("/* awesomeness @import")
+							line.startsWith("// awesomeness import") ||
+							line.startsWith("/* awesomeness @import")
 						) {
 
 							const importPathMatch = line.match(/['"]([^'"]+)['"]/);
 
 							if (importPathMatch) {
 
-								const importedComponentName = importPathMatch[1].replace(/;$/, "").trim();
+								const importedComponentName = importPathMatch[1]
+									.replace(/;$/, "")
+									.trim();
 
 								if (!allComponents.includes(importedComponentName)) {
 
@@ -273,8 +278,8 @@ export default function componentDependencies(allComponents, {
 					if (fileType === "js") {
 
 						if (
-							fileWithImportsStripped.startsWith("(function") 
-							|| fileWithImportsStripped.startsWith("((")
+							fileWithImportsStripped.startsWith("(function") ||
+							fileWithImportsStripped.startsWith("((")
 						) {
 
 							fileWithImportsStripped = `;${fileWithImportsStripped}`;
@@ -294,8 +299,7 @@ export default function componentDependencies(allComponents, {
 				
 				} catch (err) {
 
-					console.log("Failed to get dependencies", { component });
-					const full = path.join(chosenRoot, file);
+					const full = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
 
 					console.error("Failed to get dependencies", {
 						component,
