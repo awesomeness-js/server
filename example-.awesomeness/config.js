@@ -20,5 +20,6 @@ export default {
 	hostMap,
 	initDB, 
 	specialRoutes,
-	wsHandler, 
+	wsHandler,
+	debug_componentDependencies: [ 'app' ], // will info for the component when called
 };

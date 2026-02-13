@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { each, getAllFiles } from "@awesomeness-js/utils";
 import { readFileSync } from "fs";
+import getConfig from "./getConfig.js";
 
 
 function urlToFsPath(u) {
@@ -56,6 +57,8 @@ export default function componentDependencies(allComponents, {
 	showDetails = false,
 	ignore = [ "*.css.js" ],
 } = {}) {
+
+	const awesomenessConfig = getConfig();
 
 	if (!Array.isArray(componentLocations) || componentLocations.length === 0) {
 
@@ -125,6 +128,20 @@ export default function componentDependencies(allComponents, {
 					cause: lastErr?.message ?? lastErr,
 				};
 			
+			}
+
+			if (
+				awesomenessConfig.debug_componentDependencies
+				&& Array.isArray(awesomenessConfig.debug_componentDependencies)
+				&& awesomenessConfig.debug_componentDependencies.includes(component)
+			) {
+
+				console.log("[awesomenessConfig.debug componentDependencies] chosenRoot:", chosenRoot);
+				console.log("[awesomenessConfig.debug componentDependencies] allFiles count:", allFiles.length);
+				console.log("[awesomenessConfig.debug componentDependencies] first 50 files:", allFiles.slice(0, 50));
+				console.log("[awesomenessConfig.debug componentDependencies] any non-string:", allFiles.some((f) => typeof f !== "string"));
+				console.log("[awesomenessConfig.debug componentDependencies] any absolute:", allFiles.some((f) => path.isAbsolute(f)));
+
 			}
 
 			allFiles.forEach((file) => {
@@ -278,6 +295,16 @@ export default function componentDependencies(allComponents, {
 				} catch (err) {
 
 					console.log("Failed to get dependencies", { component });
+					const full = path.join(chosenRoot, file);
+
+					console.error("Failed to get dependencies", {
+						component,
+						file,
+						full,
+						code: err?.code,
+						message: err?.message,
+						stack: err?.stack,
+					});
 				
 				}
 			
