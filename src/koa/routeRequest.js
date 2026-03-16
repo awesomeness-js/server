@@ -165,63 +165,124 @@ export default async function routeRequest(ctx, next) {
 		let specific = false;
 
 		// Prefer filesystem existence checks so we don't rely on import() throwing for control flow
+		awesomenessRequest.log('Trying site specific route.', {
+			siteSpecificIndexPath,
+			siteSpecificInfoPath 
+		});
+
+		let siteSpecificIndexExists = false;
+		let siteSpecificInfoExists = false;
+
+
 		try {
 
-			awesomenessRequest.log('Trying site specific route.', {
-				siteSpecificIndexPath,
-				siteSpecificInfoPath 
-			});
-
 			await fs.access(siteSpecificIndexPath);
+			siteSpecificIndexExists = true;
+		
+		} catch {}
+
+		try {
+
 			await fs.access(siteSpecificInfoPath);
+			siteSpecificInfoExists = true;
+		
+		} catch {}
+
+		if (siteSpecificIndexExists && siteSpecificInfoExists) {
 
 			awesomenessRequest.log('Site specific route found.', {
 				siteSpecificIndexPath,
 				siteSpecificInfoPath 
 			});
 
-			routeIndex = await import(pathToFileURL(siteSpecificIndexPath).href);
-			const infoMod = await import(pathToFileURL(siteSpecificInfoPath).href);
+			try {
 
-			routeInfo = infoMod.default;
+				routeIndex = await import(pathToFileURL(siteSpecificIndexPath).href);
+				const infoMod = await import(pathToFileURL(siteSpecificInfoPath).href);
 
-			awesomenessRequest.log('Site specific route info loaded.', {
-				routeInfo 
-			});
+				routeInfo = infoMod.default;
+				awesomenessRequest.log('Site specific route info loaded.', {
+					routeInfo 
+				});
+				specific = true;
+			
+			} catch (importError) {
 
-
-			specific = true;
+				ctx.status = 500;
+				ctx.body = {
+					success: false,
+					message: "Site specific route import error",
+					error: importError,
+					siteSpecificRoute: siteSpecificIndexPath,
+					siteSpecificInfo: siteSpecificInfoPath,
+				};
+				finalFormat(awesomenessRequest, ctx);
+				
+				return;
+			
+			}
 		
-		} catch (error) {
+		} else {
 
-			awesomenessRequest.log('Site specific route not found, trying generic route.', { error });
+			awesomenessRequest.log('Site specific route not found, trying generic route.', {
+				siteSpecificIndexExists: siteSpecificIndexExists,
+				siteSpecificInfoExists: siteSpecificInfoExists 
+			});
+			let genericIndexExists = false;
+			let genericInfoExists = false;
+
 
 			try {
 
 				await fs.access(genericIndexPath);
-				await fs.access(genericInfoPath);
-
-				routeIndex = await import(pathToFileURL(genericIndexPath).href);
-				const infoMod = await import(pathToFileURL(genericInfoPath).href);
-
-				routeInfo = infoMod.default;
-
-				specific = false;
+				genericIndexExists = true;
 			
-			} catch (error2) {
+			} catch {}
+
+			try {
+
+				await fs.access(genericInfoPath);
+				genericInfoExists = true;
+			
+			} catch {}
+
+			if (genericIndexExists && genericInfoExists) {
+
+				try {
+
+					routeIndex = await import(pathToFileURL(genericIndexPath).href);
+					const infoMod = await import(pathToFileURL(genericInfoPath).href);
+
+					routeInfo = infoMod.default;
+					specific = false;
+				
+				} catch (importError2) {
+
+					ctx.status = 500;
+					ctx.body = {
+						success: false,
+						message: "Generic route import error",
+						error: importError2,
+						genericRoute: genericIndexPath,
+						genericInfo: genericInfoPath,
+					};
+					finalFormat(awesomenessRequest, ctx);
+					
+					return;
+				
+				}
+			
+			} else {
 
 				ctx.status = 404;
-
 				ctx.body = {
 					success: false,
 					message: "route not found",
-					error: error2,
 					siteSpecificRoute: siteSpecificIndexPath,
 					genericRoute: genericIndexPath,
 				};
-
 				finalFormat(awesomenessRequest, ctx);
-
+				
 				return;
 			
 			}
