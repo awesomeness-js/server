@@ -318,6 +318,30 @@ export default function componentDependencies(
 
 				each(out[component], (files, type) => {
 
+					if (type === "js") {
+
+						const jsKeys = Object.keys(files);
+
+						jsKeys.forEach((key) => {
+
+							const keyParts = key.split(".");
+
+							for (let i = 2; i < keyParts.length; i++) {
+
+								const parentPath = keyParts.slice(0, i).join(".");
+
+								if (!files[parentPath]) {
+
+									files[parentPath] = `${parentPath} = ${parentPath} || {}; `;
+								
+								}
+							
+							}
+						
+						});
+
+					}
+
 					if (type === "js" && !files[`${namespace}.${component}`]) {
 
 						files[`${namespace}.${component}`] = `${namespace}.${component} = {}; `;
