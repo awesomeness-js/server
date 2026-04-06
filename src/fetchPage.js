@@ -51,6 +51,23 @@ export default async function fetchPage(
 		return pageFnName;
 		
 	}
+
+	function pageNamespaceInit(pageFnName) {
+
+		const parts = pageFnName.split(".");
+		const inits = [];
+
+		for (let i = 2; i < parts.length - 1; i++) {
+
+			inits.push(
+				`${parts.slice(0, i + 1).join(".")} = ${parts.slice(0, i + 1).join(".")} || {};`
+			);
+		
+		}
+
+		return inits.join("\n");
+
+	}
 	
 
 	// initialize if not already available
@@ -156,6 +173,7 @@ export default async function fetchPage(
 				}) => {
 
 					const fnName = pageFn(path, awesomenessRequest);
+					const namespaceInit = pageNamespaceInit(fnName);
 
 					content = content.replaceAll(`import ui from '#ui';`, "");
 					content = content.replaceAll(`import ui from "#ui";`, "");
@@ -164,6 +182,12 @@ export default async function fetchPage(
 					content = content.replaceAll("export default async function", `${fnName} = async function`);
 					content = content.replaceAll("export default async", `${fnName} = async`);
 					content = content.replaceAll("export default", `${fnName} =`);
+
+					if (namespaceInit) {
+
+						content = `${namespaceInit}\n${content}`;
+					
+					}
 
 					return content;
 				
