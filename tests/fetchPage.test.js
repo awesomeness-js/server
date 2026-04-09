@@ -48,6 +48,7 @@ describe("fetchPage component inference", () => {
 		"css"
 	);
 	const expectedComponents = [
+		"app",
 		"card",
 		"cardMain",
 		"cardMount",
@@ -201,6 +202,7 @@ describe("fetchPage component inference", () => {
 		console.log("fetchPage inferred components (no about.components)", inferred);
 
 		expect(inferred).toEqual([
+			"app",
 			"cardMain",
 			"cardMount",
 			"pageInit",

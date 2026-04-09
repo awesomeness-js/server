@@ -1,0 +1,305 @@
+/* =========================================================
+   AWESOMENESS PWA – base layout + nav + menus
+   ========================================================= */
+
+/* (optional) if you want predictable sizing everywhere */
+.awesomeness-app-pwa,
+.awesomeness-app-pwa * {
+	box-sizing: border-box;
+}
+
+/* -------------------------
+   MAIN CONTENT AREA
+   ------------------------- */
+.awesomeness-app-pwa-main {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+
+	width: 100%;
+	min-height: 100%;
+
+	overflow-x: hidden;
+	overflow: auto;
+
+	padding-top: 65px; /* account for fixed top nav bar */
+	padding-bottom: 65px; /* account for fixed bottom nav bar */
+
+	z-index: 0;
+}
+
+
+/* -------------------------
+   NAV BARS (fixed)
+   ------------------------- */
+.awesomeness-app-pwa-top-navBar,
+.awesomeness-app-pwa-bottom-navBar {
+	position: fixed;
+	left: 0;
+	right: 0;
+
+	height: 65px;
+	z-index: 2;
+}
+
+.awesomeness-app-pwa-top-navBar {
+	top: 0;
+
+	/* layout */
+	display: flex;
+	align-items: center;
+
+	/* keep true 65px height; avoid vertical padding */
+	padding: 0 12px;
+	min-width: 0;
+}
+
+.awesomeness-app-pwa-bottom-navBar {
+	bottom: 0;
+}
+
+
+/* -------------------------
+   LEFT / RIGHT MENUS
+   ------------------------- */
+.awesomeness-app-pwa-left-menu,
+.awesomeness-app-pwa-right-menu {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+
+	width: 300px; /* use width instead of min-width for predictable translate */
+	max-width: 90vw;
+
+	transition: transform 200ms ease;
+	will-change: transform;
+}
+
+/* LEFT MENU */
+.awesomeness-app-pwa-left-menu {
+	left: 0;
+	z-index: 1;
+	transform: translate3d(-100%, 0, 0);
+}
+
+.awesomeness-app-pwa-left-menu.open {
+	transform: translate3d(0, 0, 0);
+}
+
+/* RIGHT MENU */
+.awesomeness-app-pwa-right-menu {
+	right: 0;
+	z-index: 3;
+	transform: translate3d(100%, 0, 0);
+}
+
+.awesomeness-app-pwa-right-menu.open {
+	transform: translate3d(0, 0, 0);
+}
+
+.awesomeness-app-pwa-left-menu.awesomeness-app-pwa-under-navBar,
+.awesomeness-app-pwa-right-menu.awesomeness-app-pwa-under-navBar {
+	top: 65px;
+}
+
+.awesomeness-app-pwa-left-menu.open {
+	left: 0;
+}
+
+.awesomeness-app-pwa-right-menu.open {
+	right: 0;
+}
+
+/* -------------------------
+   SUB NAV ITEMS (bottom + top right clones)
+   ------------------------- */
+.awesomeness-app-pwa-sub-nav-item {
+	cursor: pointer;
+	text-align: center;
+	padding: 5px 5px 5px 0px;
+    border-bottom: solid 2px transparent;
+}
+
+.awesomeness-app-pwa-top-navBar .awesomeness-app-pwa-sub-nav-item{
+	height: 65px;
+}
+
+.awesomeness-app-pwa-sub-nav-item-ico {
+	font-size: 1.2em;
+	padding-bottom: 5px;
+}
+
+.awesomeness-app-pwa-sub-nav-item-name {
+	font-size: 0.9em;
+}
+
+.app-size-p .awesomeness-app-pwa-sub-nav-item-name {
+	font-size: 0.8em;
+}
+
+.app-size-p .awesomeness-app-pwa-sub-nav-item {
+	padding: 0px;
+}
+
+/* -------------------------
+   TOP NAV CONTENT
+   Order: profile | logo | search (flex) | right group | menu
+   ------------------------- */
+
+/* profile pic (left) */
+.awesomeness-app-pwa-profile-pic {
+	flex: 0 0 auto;
+
+	width: 45px;
+	height: 45px;
+	border-radius: 9999px;
+
+	text-align: center;
+	line-height: 45px;
+
+	margin-left: 10px; /* keep your offset */
+
+	background-position: center;
+	background-size: cover;
+
+	cursor: pointer;
+
+}
+
+/* logo next to profile */
+.awesomeness-app-pwa-logo {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+
+	cursor: pointer;
+
+	min-width: 0;
+}
+
+.awesomeness-app-pwa-logo:hover{
+    color: var(--hover-color);
+}
+
+
+/* search takes ALL remaining space */
+.awesomeness-app-pwa-search-area {
+	flex: 1 1 auto;
+	min-width: 0;
+
+	display: flex;
+	align-items: center;
+
+	/* your requirement: items inside search stay to the right */
+	justify-content: flex-end;
+
+	overflow: hidden;
+	white-space: nowrap;
+
+	padding: 0 20px;
+}
+
+.app-size-p .awesomeness-app-pwa-search-area{
+	padding: 0px;
+}
+
+/* right group should only be as wide as its content (no hover slab) */
+.awesomeness-app-pwa-top-navBar-right {
+	flex: 0 0 auto;
+	width: auto;
+	min-width: 0;
+
+	display: flex;
+	justify-content: flex-end;
+	gap: 20px;
+}
+
+.app-size-t .awesomeness-app-pwa-top-navBar-right{
+	gap: 10px;
+}
+
+/* menu button pinned to far right naturally (since search is flex:1) */
+.awesomeness-app-pwa-menu-button {
+	flex: 0 0 auto;
+
+	width: 40px;
+	height: 40px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	cursor: pointer;
+
+	/* keep the icon centered vertically in the fixed-height bar */
+	padding: 0;
+	font-size: 1.2em;
+}
+
+.awesomeness-app-pwa-search-icon{
+	cursor: pointer;
+	font-size: 1.2em;
+}
+
+.awesomeness-app-pwa-click-to-close {
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+}
+
+.app-size-xl .awesomeness-app-pwa-top-navBar-right .awesomeness-app-pwa-sub-nav-item,
+.app-size-d .awesomeness-app-pwa-top-navBar-right .awesomeness-app-pwa-sub-nav-item {
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.app-size-xl .awesomeness-app-pwa-top-navBar-right .awesomeness-app-pwa-sub-nav-item-ico,
+.app-size-d .awesomeness-app-pwa-top-navBar-right .awesomeness-app-pwa-sub-nav-item-ico {
+  padding-bottom: 0;
+  padding-right: 5px;
+}
+
+.awesomeness-app-pwa-search-input-container {
+	position: relative;
+
+	width: 100%;
+	max-width: 500px;
+	
+	margin: 0 auto;
+
+	padding: 7px 50px 7px 40px;
+	border-radius: 50px;
+}
+
+/* shared icon centering */
+.awesomeness-app-pwa-search-icon{
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	align-items: center;
+}
+
+/* left icon */
+.awesomeness-app-pwa-search-icon{
+	left: 10px;
+}
+
+
+.awesomeness-app-pwa-bottomNavUse-names .awesomeness-app-pwa-sub-nav-item-ico,
+.awesomeness-app-pwa-topNavUse-names .awesomeness-app-pwa-sub-nav-item-ico {
+	display: none;
+}
+
+.awesomeness-app-pwa-bottomNavUse-icons .awesomeness-app-pwa-sub-nav-item-name,
+.awesomeness-app-pwa-topNavUse-icons .awesomeness-app-pwa-sub-nav-item-name {
+	display: none;
+}

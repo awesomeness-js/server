@@ -2,10 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { each, getAllFiles } from "@awesomeness-js/utils";
 import getConfig from "./getConfig.js";
-import {
-	extractUiRefsFromFileMemoized,
-	readFileMemoized,
-} from "./componentAndPageMemory.js";
+import { extractUiRefsFromFileMemoized, readFileMemoized } from "./componentAndPageMemory.js";
 
 function urlToFsPath(u) {
 
@@ -182,6 +179,7 @@ export default function componentDependencies(
 
 						const newTest = extractUiRefsFromFileMemoized(filePath, {
 							namespace,
+							includeDotAccess: true,
 							cacheContext: `component:${component}|file:${filePath}`,
 						});
 

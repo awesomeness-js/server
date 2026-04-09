@@ -1,0 +1,151 @@
+/* ================================
+   Awesomeness App Simple - NAV ONLY
+   ================================ */
+
+.awesomeness-app-simple-main {
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 100%;
+  	margin: 0 auto;
+	padding-top: 65px; /* account for fixed nav bar */
+}
+
+.awesomeness-app-simple-main.withFullScreenHero {
+	padding-top: 0px; /* account for fixed nav bar */
+}
+
+.awesomeness-app-simple-navBar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 65px;
+	z-index: 5;
+}
+
+/* NEW: interior wrapper */
+.awesomeness-app-simple-navBar-interior{
+	margin: 0 auto;
+	height: 65px;
+	padding: 0 16px;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.awesomeness-app-simple-logo{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.awesomeness-app-simple-top-navItems{
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
+.awesomeness-app-simple-nav-item{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 65px;
+	padding: 0 14px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+/* Menu button */
+.awesomeness-app-simple-menu-button{
+	margin-left: auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 65px;
+	padding: 0 12px;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	font-size: 1.2em;
+	cursor: pointer;
+}
+
+/* Backdrop (z-index 2) */
+.awesomeness-app-simple-menu-backdrop{
+	position: fixed;
+	inset: 0;
+	z-index: 2;
+	}
+
+/* Phone slide-down menu (z-index 3) */
+.awesomeness-app-simple-phone-menu{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 4;
+
+	transform: translate3d(0, -100%, 0);
+	transition: transform 220ms ease;
+
+	padding-top: 65px;
+	padding-bottom: 30px;
+}
+
+/* open state */
+.awesomeness-app-simple-phone-menu.is-open{
+	transform: translate3d(0, 0, 0);
+}
+
+/* Menu rows */
+.awesomeness-app-simple-phone-menu a,
+.awesomeness-app-simple-phone-menu .awesomeness-app-simple-nav-item{
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 56px;
+	padding: 0 16px;
+}
+
+
+.awesomeness-app-simple-nav-item span {
+	position: relative;
+	display: inline-block;
+	padding-bottom: 4px;
+}
+
+.awesomeness-app-simple-nav-item span::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 0;
+
+	height: 2px;
+	width: 100%;
+
+	background: currentColor;
+
+	transform: scaleX(0);
+	transform-origin: right center;
+
+	transition: transform 420ms ease !important;
+}
+
+.awesomeness-app-simple-nav-item:hover span::after {
+	transform: scaleX(1);
+	transform-origin: left center;
+}
+
+.awesomeness-app-simple-nav-item span::after {
+	transition: transform 420ms cubic-bezier(.2,.8,.2,1);
+}

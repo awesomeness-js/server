@@ -2,13 +2,39 @@ export default function homePage() {
 
 	ui.pageScript();
 
+	ui.app.start();
+
 	const cards = [
-		{ id: "a", label: "Analytics", value: 132 },
-		{ id: "b", label: "Sales", value: 98 },
-		{ id: "c", label: "Leads", value: 211 },
-		{ id: "d", label: "Retention", value: 87 },
-		{ id: "e", label: "Support", value: 56 },
-		{ id: "f", label: "Backlog", value: 23 },
+		{
+			id: "a",
+			label: "Analytics",
+			value: 132 
+		},
+		{
+			id: "b",
+			label: "Sales",
+			value: 98 
+		},
+		{
+			id: "c",
+			label: "Leads",
+			value: 211 
+		},
+		{
+			id: "d",
+			label: "Retention",
+			value: 87 
+		},
+		{
+			id: "e",
+			label: "Support",
+			value: 56 
+		},
+		{
+			id: "f",
+			label: "Backlog",
+			value: 23 
+		},
 	];
 
 	const rows = [];
@@ -31,14 +57,21 @@ export default function homePage() {
 
 	const totals = rows.reduce(
 		(acc, row) => {
+
 			acc.total += row.value;
 			acc.high += row.status === "high" ? 1 : 0;
 			acc.medium += row.status === "medium" ? 1 : 0;
 			acc.low += row.status === "low" ? 1 : 0;
 
 			return acc;
+		
 		},
-		{ total: 0, high: 0, medium: 0, low: 0 }
+		{
+			total: 0,
+			high: 0,
+			medium: 0,
+			low: 0 
+		}
 	);
 
 	const report = {
@@ -50,7 +83,7 @@ export default function homePage() {
 			version: "1.0.0",
 			notes: [
 				"This fixture intentionally has larger content for benchmark-style tests.",
-				"The only ui reference in this file should remain ui.pageScript().",
+				"ui references in this file: ui.pageScript(), ui.app.start().",
 			],
 		},
 	};

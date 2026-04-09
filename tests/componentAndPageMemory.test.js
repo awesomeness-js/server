@@ -79,6 +79,7 @@ describe("componentAndPageMemory", () => {
 
 		console.log("components gathered", gatheredComponents);
 		expect(gatheredComponents).toEqual([
+			"app",
 			"card",
 			"cardMain",
 			"cardMount",

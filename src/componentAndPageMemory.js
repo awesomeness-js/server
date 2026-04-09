@@ -8,6 +8,13 @@ const REFS_CACHE_LIMIT = 5000;
 const fileCache = new Map();
 const refsCache = new Map();
 
+const DEFAULT_EXTRACT_OPTIONS = Object.freeze({
+	namespace: "ui",
+	includeCall: true,
+	includeDotAccess: false,
+	cacheContext: "",
+});
+
 function toMB(bytes) {
 
 	return Number((bytes / (1024 * 1024)).toFixed(6));
@@ -62,14 +69,35 @@ function hashContent(content) {
 
 }
 
-function refsCacheKey(content, options) {
+function normalizeExtractOptions(
+	{
+		namespace = DEFAULT_EXTRACT_OPTIONS.namespace,
+		includeCall = DEFAULT_EXTRACT_OPTIONS.includeCall,
+		includeDotAccess = DEFAULT_EXTRACT_OPTIONS.includeDotAccess,
+		cacheContext,
+	} = {},
+	{
+		defaultCacheContext = DEFAULT_EXTRACT_OPTIONS.cacheContext,
+	} = {}
+) {
+
+	return {
+		namespace,
+		includeCall,
+		includeDotAccess,
+		cacheContext: cacheContext ?? defaultCacheContext,
+	};
+
+}
+
+function refsCacheKey(content, options = {}) {
 
 	const {
-		namespace = "ui",
-		includeCall = true,
-		includeDotAccess = false,
-		cacheContext = "",
-	} = options || {};
+		namespace,
+		includeCall,
+		includeDotAccess,
+		cacheContext,
+	} = normalizeExtractOptions(options);
 	const contentHash = hashContent(content);
 	const contextPart = cacheContext ? `${cacheContext}|` : "";
 
@@ -80,11 +108,13 @@ function refsCacheKey(content, options) {
 function refsCacheKeyFromFile(filePath, fileMeta, options = {}) {
 
 	const {
-		namespace = "ui",
-		includeCall = true,
-		includeDotAccess = false,
-		cacheContext = `file:${filePath}`,
-	} = options || {};
+		namespace,
+		includeCall,
+		includeDotAccess,
+		cacheContext,
+	} = normalizeExtractOptions(options, {
+		defaultCacheContext: `file:${filePath}`,
+	});
 	const contextPart = cacheContext ? `${cacheContext}|` : "";
 
 	return `${contextPart}${namespace}|${includeCall}|${includeDotAccess}|mtime:${fileMeta.mtimeMs}|size:${fileMeta.size}`;
@@ -134,7 +164,8 @@ export function extractUiRefsMemoized(content, options = {}) {
 	
 	}
 
-	const key = refsCacheKey(content, options);
+	const extractionOptions = normalizeExtractOptions(options);
+	const key = refsCacheKey(content, extractionOptions);
 	const existing = refsCache.get(key);
 
 	if (existing) {
@@ -143,7 +174,7 @@ export function extractUiRefsMemoized(content, options = {}) {
 	
 	}
 
-	const refs = extractUiComponentRefs(content, options);
+	const refs = extractUiComponentRefs(content, extractionOptions);
 
 	refsCache.set(key, refs);
 	pruneCache(refsCache, REFS_CACHE_LIMIT);
@@ -155,12 +186,9 @@ export function extractUiRefsMemoized(content, options = {}) {
 export function extractUiRefsFromFileMemoized(filePath, options = {}) {
 
 	const fileEntry = getFileCacheEntry(filePath);
-	const extractionOptions = options.cacheContext
-		? options
-		: {
-			...options,
-			cacheContext: `file:${filePath}`,
-		};
+	const extractionOptions = normalizeExtractOptions(options, {
+		defaultCacheContext: `file:${filePath}`,
+	});
 	const key = refsCacheKeyFromFile(filePath, fileEntry, extractionOptions);
 	const existing = refsCache.get(key);
 
