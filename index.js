@@ -7,8 +7,10 @@ import _applicationMap from './src/applicationMap.js';
 import _awesomenessNormalizeRequest from './src/awesomenessNormalizeRequest.js';
 import _brotliJsonResponse from './src/brotliJsonResponse.js';
 import _checkAccess from './src/checkAccess.js';
+import _componentAndPageMemory from './src/componentAndPageMemory.js';
 import _componentDependencies from './src/componentDependencies.js';
 import _config from './src/config.js';
+import _extractUiComponentRefs from './src/extractUiComponentRefs.js';
 import _fetchPage from './src/fetchPage.js';
 import _getConfig from './src/getConfig.js';
 import _getMD from './src/getMD.js';
@@ -35,8 +37,10 @@ export { _applicationMap as applicationMap };
 export { _awesomenessNormalizeRequest as awesomenessNormalizeRequest };
 export { _brotliJsonResponse as brotliJsonResponse };
 export { _checkAccess as checkAccess };
+export { _componentAndPageMemory as componentAndPageMemory };
 export { _componentDependencies as componentDependencies };
 export { _config as config };
+export { _extractUiComponentRefs as extractUiComponentRefs };
 export { _fetchPage as fetchPage };
 export { _getConfig as getConfig };
 export { _getMD as getMD };
@@ -71,18 +75,16 @@ export default {
 	awesomenessNormalizeRequest: _awesomenessNormalizeRequest,
 	brotliJsonResponse: _brotliJsonResponse,
 	checkAccess: _checkAccess,
+	componentAndPageMemory: _componentAndPageMemory,
 	componentDependencies: _componentDependencies,
 	config: _config,
+	extractUiComponentRefs: _extractUiComponentRefs,
 	fetchPage: _fetchPage,
 	getConfig: _getConfig,
 	getMD: _getMD,
 	init: _init,
 	pageInfo: _pageInfo,
 	reRoute: _reRoute,
-	/**
-	 * Case-insensitive real path resolver.
-	 * Works correctly on Windows, macOS, and Linux/Docker.
-	 */
 	resolveRealCasePath: _resolveRealCasePath,
 	specialPaths: _specialPaths,
 	start: _start,

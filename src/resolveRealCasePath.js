@@ -1,10 +1,6 @@
 import { readdirSync } from "fs";
 import path from "path";
 
-/**
- * Case-insensitive real path resolver.
- * Works correctly on Windows, macOS, and Linux/Docker.
- */
 export default function resolveRealCasePath(inputPath, returnAbsolute = false) {
 
 	if (!inputPath) return null;

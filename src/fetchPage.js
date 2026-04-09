@@ -1,10 +1,12 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import { existsSync } from "fs";
 
 import componentDependencies from "./componentDependencies.js";
 import pageInfo from "./pageInfo.js";
 import { each, md5, combineFiles } from "@awesomeness-js/utils";
 import getConfig from "./getConfig.js";
+import { extractUiRefsFromFileMemoized, extractUiRefsMemoized } from "./componentAndPageMemory.js";
 
 const componentNamespace = "ui";
 const pageNamespaceBase = `app.pages`;
@@ -66,6 +68,63 @@ export default async function fetchPage(
 		}
 
 		return inits.join("\n");
+
+	}
+
+	function collectComponentsFromPageFiles() {
+
+		const found = new Set();
+		const initPath = path.join(path.dirname(jsPath), "init.js");
+		const cacheScope = `site:${awesomenessRequest.site}|page:${page}`;
+
+		if (existsSync(initPath)) {
+
+			try {
+
+
+				extractUiRefsFromFileMemoized(initPath, {
+					namespace: componentNamespace,
+					includeDotAccess: true,
+				}).forEach((name) => found.add(name));
+			
+			} catch (err) {
+
+				console.log("failed to infer components from page init.js", {
+					page,
+					initPath,
+					err,
+				});
+			
+			}
+		
+		}
+
+		try {
+
+			combineFiles(jsPath, "js", {
+				processContent: ({ content }) => {
+
+					extractUiRefsMemoized(content, {
+						namespace: componentNamespace,
+						includeDotAccess: true,
+						cacheContext: `${cacheScope}|js-content`,
+					}).forEach((name) => found.add(name));
+
+					return content;
+				
+				},
+			});
+		
+		} catch (err) {
+
+			console.log("failed to infer components from page js", {
+				page,
+				err,
+			});
+		
+		}
+
+		return [ ...found ];
 
 	}
 	
@@ -189,7 +248,8 @@ export default async function fetchPage(
 					
 					}
 
-					return content;
+					return content; 
+					
 				
 				},
 			});
@@ -218,9 +278,24 @@ export default async function fetchPage(
 	
 	}
 
-	if (about?.components?.length) {
+	const explicitComponents = Array.isArray(about?.components) ? about.components : [];
+	const inferredComponents = [
+		...new Set([
+			...collectComponentsFromPageFiles(),
+			...(meta.pages[page]?.js
+				? extractUiRefsMemoized(meta.pages[page].js, {
+					namespace: componentNamespace,
+					includeDotAccess: true,
+					cacheContext: `site:${awesomenessRequest.site}|page:${page}|bundled-js`,
+				})
+				: []),
+		]),
+	];
+	const pageComponents = [ ...new Set([ ...explicitComponents, ...inferredComponents ]) ];
 
-		const allDependencies = componentDependencies(about.components, {
+	if (pageComponents.length) {
+
+		const allDependencies = componentDependencies(pageComponents, {
 			componentLocations: awesomenessConfig.componentLocations(awesomenessRequest),
 			namespace: componentNamespace,
 			showDetails,

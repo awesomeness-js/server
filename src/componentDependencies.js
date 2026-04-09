@@ -1,8 +1,11 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { each, getAllFiles } from "@awesomeness-js/utils";
-import { readFileSync } from "fs";
 import getConfig from "./getConfig.js";
+import {
+	extractUiRefsFromFileMemoized,
+	readFileMemoized,
+} from "./componentAndPageMemory.js";
 
 function urlToFsPath(u) {
 
@@ -31,22 +34,6 @@ function urlToFsPath(u) {
 	if (path.sep === "/" && p && !p.startsWith("/")) p = "/" + p;
 
 	return p;
-
-}
-
-function extractUiFirstParts(str) {
-
-	const regex = /ui\.([a-zA-Z0-9_]+)(?:\.[a-zA-Z0-9_.]*)?\(/g;
-	const matches = new Set();
-	let match;
-
-	while ((match = regex.exec(str)) !== null) {
-
-		matches.add(match[1]);
-	
-	}
-
-	return [ ...matches ];
 
 }
 
@@ -186,14 +173,17 @@ export default function componentDependencies(
 
 					// readFileSync must use chosenRoot + relative file path
 					const filePath = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
-					const fileContent = readFileSync(filePath, "utf-8");
+					const fileContent = readFileMemoized(filePath);
 
 					const lines = fileContent.split("\n");
 					let fileWithImportsStripped = "";
 
 					try {
 
-						const newTest = extractUiFirstParts(fileContent);
+						const newTest = extractUiRefsFromFileMemoized(filePath, {
+							namespace,
+							cacheContext: `component:${component}|file:${filePath}`,
+						});
 
 						if (newTest.length > 0) {
 
