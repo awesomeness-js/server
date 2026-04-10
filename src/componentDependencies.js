@@ -52,319 +52,322 @@ export default function componentDependencies(
 	
 	}
 
-	let componentsToProcess = [ ...allComponents ];
+	let componentsToProcess = [ ...new Set(allComponents) ];
+	const queuedComponents = new Set(componentsToProcess);
+	const processedComponents = new Set();
 	const out = {};
 
 	while (componentsToProcess.length > 0) {
 
-		const newComponentsToProcess = [];
+		const component = componentsToProcess.shift();
 
-		componentsToProcess.forEach((component) => {
+		queuedComponents.delete(component);
 
-			// Build roots in priority order; last is default because it’s last
-			const candidateRoots = componentLocations.map((baseUrl) => {
+		if (processedComponents.has(component)) {
 
-				// baseUrl should point at a directory; we resolve component under it
-				const componentUrl = new URL(`./${component}/`, baseUrl);
+			continue;
+		
+		}
 
-				
-				return path.resolve(urlToFsPath(componentUrl));
+		processedComponents.add(component);
+
+		const candidateRoots = componentLocations.map((baseUrl) => {
+
+			const componentUrl = new URL(`./${component}/`, baseUrl);
+
+			return path.resolve(urlToFsPath(componentUrl));
+		
+		});
+
+		let allFiles;
+		let chosenRoot;
+		let lastErr;
+
+		for (const root of candidateRoots) {
+
+			try {
+
+				allFiles = getAllFiles(".", {
+					dir: root,
+					root,
+					ignore,
+				});
+
+				chosenRoot = root;
+				break;
 			
-			});
+			} catch (e) {
 
-			let allFiles;
-			let chosenRoot;
-			let lastErr;
+				lastErr = e;
+			
+			}
+		
+		}
 
-			for (const root of candidateRoots) {
+		if (!allFiles) {
+
+			throw {
+				message: "component does not exist (no location matched)",
+				component,
+				tried: candidateRoots,
+				cause: lastErr?.message ?? lastErr,
+			};
+		
+		}
+
+		if (
+			awesomenessConfig.debug_componentDependencies &&
+			Array.isArray(awesomenessConfig.debug_componentDependencies) &&
+			awesomenessConfig.debug_componentDependencies.includes(component)
+		) {
+
+			console.log("[awesomenessConfig.debug componentDependencies] chosenRoot:", chosenRoot);
+			console.log("[awesomenessConfig.debug componentDependencies] allFiles count:", allFiles.length);
+			console.log("[awesomenessConfig.debug componentDependencies] first 50 files:", allFiles.slice(0, 50));
+			console.log(
+				"[awesomenessConfig.debug componentDependencies] any non-string:",
+				allFiles.some((f) => typeof f !== "string")
+			);
+			console.log(
+				"[awesomenessConfig.debug componentDependencies] any absolute:",
+				allFiles.some((f) => path.isAbsolute(f))
+			);
+		
+		}
+
+		allFiles.forEach((file) => {
+
+			const normalizedPath = path.normalize(file);
+			const fileNameFull = path.basename(normalizedPath);
+			const fileTypeArr = fileNameFull.split(".");
+			const fileType = fileTypeArr[fileTypeArr.length - 1].toLowerCase();
+			const fileName = fileTypeArr.slice(0, -1).join(".");
+
+			out[component] = out[component] || {};
+			out[component][fileType] = out[component][fileType] || {};
+
+			const dir = path.dirname(normalizedPath);
+			const dirParts = dir === "." ? [] : dir.split(path.sep);
+
+			let tail = "";
+
+			if (fileType === "js" || fileType === "css") {
+
+				if (dirParts.length > 0) {
+
+					tail = fileName === "index"
+						? "." + dirParts.join(".")
+						: `.${dirParts.join(".")}.${fileName}`;
+				
+				} else {
+
+					tail = fileName === "index" ? "" : `.${fileName}`;
+				
+				}
+			
+			}
+
+			const componentName = `${namespace}.${component}${tail}`;
+
+			try {
+
+				const filePath = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
+				const fileContent = readFileMemoized(filePath);
+
+				const lines = fileContent.split("\n");
+				let fileWithImportsStripped = "";
 
 				try {
 
-					// IMPORTANT: pass root so getAllFiles returns paths relative to the scan root
-					allFiles = getAllFiles(".", {
-						dir: root,
-						root,
-						ignore,
+					const discoveredFromContent = extractUiRefsFromFileMemoized(filePath, {
+						namespace,
+						includeDotAccess: true,
+						cacheContext: `component:${component}|file:${filePath}`,
 					});
 
-					chosenRoot = root;
-					break; // first match wins
-				
-				} catch (e) {
+					discoveredFromContent.forEach((newComp) => {
 
-					lastErr = e;
-				
-				}
-			
-			}
+						if (!allComponents.includes(newComp)) {
 
-			if (!allFiles) {
+							allComponents.push(newComp);
+						
+						}
 
-				throw {
-					message: "component does not exist (no location matched)",
-					component,
-					tried: candidateRoots,
-					cause: lastErr?.message ?? lastErr,
-				};
-			
-			}
+						if (!processedComponents.has(newComp) && !queuedComponents.has(newComp)) {
 
-			if (
-				awesomenessConfig.debug_componentDependencies &&
-				Array.isArray(awesomenessConfig.debug_componentDependencies) &&
-				awesomenessConfig.debug_componentDependencies.includes(component)
-			) {
-
-				console.log("[awesomenessConfig.debug componentDependencies] chosenRoot:", chosenRoot);
-				console.log("[awesomenessConfig.debug componentDependencies] allFiles count:", allFiles.length);
-				console.log("[awesomenessConfig.debug componentDependencies] first 50 files:", allFiles.slice(0, 50));
-				console.log(
-					"[awesomenessConfig.debug componentDependencies] any non-string:",
-					allFiles.some((f) => typeof f !== "string")
-				);
-				console.log(
-					"[awesomenessConfig.debug componentDependencies] any absolute:",
-					allFiles.some((f) => path.isAbsolute(f))
-				);
-			
-			}
-
-			allFiles.forEach((file) => {
-
-				const normalizedPath = path.normalize(file);
-
-				const fileNameFull = path.basename(normalizedPath);
-				const fileTypeArr = fileNameFull.split(".");
-				const fileType = fileTypeArr[fileTypeArr.length - 1].toLowerCase();
-				const fileName = fileTypeArr.slice(0, -1).join(".");
-
-				out[component] = out[component] || {};
-				out[component][fileType] = out[component][fileType] || {};
-
-				// Build tail from the file's relative directory (NOT by searching for `component` in the path)
-				const dir = path.dirname(normalizedPath);
-				const dirParts = dir === "." ? [] : dir.split(path.sep);
-
-				let tail = "";
-
-				if (fileType === "js" || fileType === "css") {
-
-					if (dirParts.length > 0) {
-
-						tail =
-							fileName === "index"
-								? "." + dirParts.join(".")
-								: `.${dirParts.join(".")}.${fileName}`;
-					
-					} else {
-
-						tail = fileName === "index" ? "" : `.${fileName}`;
-					
-					}
-				
-				}
-
-				const componentName = `${namespace}.${component}${tail}`;
-
-				try {
-
-					// readFileSync must use chosenRoot + relative file path
-					const filePath = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
-					const fileContent = readFileMemoized(filePath);
-
-					const lines = fileContent.split("\n");
-					let fileWithImportsStripped = "";
-
-					try {
-
-						const newTest = extractUiRefsFromFileMemoized(filePath, {
-							namespace,
-							includeDotAccess: true,
-							cacheContext: `component:${component}|file:${filePath}`,
-						});
-
-						if (newTest.length > 0) {
-
-							newTest.forEach((newComp) => {
-
-								if (!allComponents.includes(newComp)) {
-
-									allComponents.push(newComp);
-									newComponentsToProcess.push(newComp);
-								
-								}
-							
-							});
+							componentsToProcess.push(newComp);
+							queuedComponents.add(newComp);
 						
 						}
 					
-					} catch (error) {
+					});
+				
+				} catch (error) {
 
-						console.error("Error extracting UI parts:", error);
-					
-					}
+					console.error("Error extracting UI parts:", error);
+				
+				}
 
-					lines.forEach((line) => {
+				lines.forEach((line) => {
 
-						if (line.startsWith("import ui")) {
+					if (line.startsWith("import ui")) {
 
-							if (line.includes(`import ui from '#ui'; // `)) {
+						if (line.includes(`import ui from '#ui'; // `)) {
 
-								const imports = line.split(`import ui from '#ui'; // `);
+							const imports = line.split(`import ui from '#ui'; // `);
 
-								if (imports.length > 1) {
+							if (imports.length > 1) {
 
-									const importComponents = imports[1]
-										.split(",")
-										.map((c) => c.trim());
-
-									importComponents.forEach((importComponent) => {
+								imports[1]
+									.split(",")
+									.map((c) => c.trim())
+									.forEach((importComponent) => {
 
 										if (!allComponents.includes(importComponent)) {
 
 											allComponents.push(importComponent);
-											newComponentsToProcess.push(importComponent);
+										
+										}
+
+										if (!processedComponents.has(importComponent) && !queuedComponents.has(importComponent)) {
+
+											componentsToProcess.push(importComponent);
+											queuedComponents.add(importComponent);
 										
 										}
 									
 									});
-								
-								}
 							
 							}
-						
-						} else if (
-							line.startsWith("// awesomeness import") ||
-							line.startsWith("/* awesomeness @import")
-						) {
-
-							const importPathMatch = line.match(/['"]([^'"]+)['"]/);
-
-							if (importPathMatch) {
-
-								const importedComponentName = importPathMatch[1]
-									.replace(/;$/, "")
-									.trim();
-
-								if (!allComponents.includes(importedComponentName)) {
-
-									allComponents.push(importedComponentName);
-									newComponentsToProcess.push(importedComponentName);
-								
-								}
-							
-							}
-						
-						} else {
-
-							fileWithImportsStripped += `${line}\n`;
 						
 						}
 					
-					});
+					} else if (
+						line.startsWith("// awesomeness import") ||
+						line.startsWith("/* awesomeness @import")
+					) {
 
-					if (fileType === "js") {
+						const importPathMatch = line.match(/['"]([^'"]+)['"]/);
 
-						if (
-							fileWithImportsStripped.startsWith("(function") ||
-							fileWithImportsStripped.startsWith("((")
-						) {
+						if (importPathMatch) {
 
-							fileWithImportsStripped = `;${fileWithImportsStripped}`;
-						
-						} else {
+							const importedComponentName = importPathMatch[1].replace(/;$/, "").trim();
 
-							fileWithImportsStripped = fileWithImportsStripped.replace(
-								"export default ",
-								`${componentName} = `
-							);
+							if (!allComponents.includes(importedComponentName)) {
+
+								allComponents.push(importedComponentName);
+							
+							}
+
+							if (!processedComponents.has(importedComponentName) && !queuedComponents.has(importedComponentName)) {
+
+								componentsToProcess.push(importedComponentName);
+								queuedComponents.add(importedComponentName);
+							
+							}
 						
 						}
+					
+					} else {
+
+						fileWithImportsStripped += `${line}\n`;
 					
 					}
-
-					out[component][fileType][componentName] = fileWithImportsStripped;
 				
-				} catch (err) {
+				});
 
-					const full = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
+				if (fileType === "js") {
 
-					console.error("Failed to get dependencies", {
-						component,
-						file,
-						full,
-						code: err?.code,
-						message: err?.message,
-						stack: err?.stack,
-					});
+					if (
+						fileWithImportsStripped.startsWith("(function") ||
+						fileWithImportsStripped.startsWith("((")
+					) {
+
+						fileWithImportsStripped = `;${fileWithImportsStripped}`;
+					
+					} else {
+
+						fileWithImportsStripped = fileWithImportsStripped.replace(
+							"export default ",
+							`${componentName} = `
+						);
+					
+					}
 				
 				}
+
+				out[component][fileType][componentName] = fileWithImportsStripped;
 			
-			});
+			} catch (err) {
 
-			if (out[component]) {
+				const full = path.isAbsolute(file) ? file : path.join(chosenRoot, file);
 
-				each(out[component], (files, type) => {
-
-					if (type === "js") {
-
-						const jsKeys = Object.keys(files);
-
-						jsKeys.forEach((key) => {
-
-							const keyParts = key.split(".");
-
-							for (let i = 2; i < keyParts.length; i++) {
-
-								const parentPath = keyParts.slice(0, i).join(".");
-
-								if (!files[parentPath]) {
-
-									files[parentPath] = `${parentPath} = ${parentPath} || {}; `;
-								
-								}
-							
-							}
-						
-						});
-
-					}
-
-					if (type === "js" && !files[`${namespace}.${component}`]) {
-
-						files[`${namespace}.${component}`] = `${namespace}.${component} = {}; `;
-					
-					}
-
-					files = Object.keys(files)
-						.sort()
-						.reduce((obj, key) => {
-
-							obj[key] = files[key];
-							
-							return obj;
-						
-						}, {});
-
-					if (showDetails) {
-
-						out[component][type + "_details"] = files;
-					
-					}
-
-					out[component][type] = ` ${Object.values(files).join("\n")} `;
-				
+				console.error("Failed to get dependencies", {
+					component,
+					file,
+					full,
+					code: err?.code,
+					message: err?.message,
+					stack: err?.stack,
 				});
 			
 			}
-
-			componentsToProcess = componentsToProcess.filter((f) => f !== component);
 		
 		});
 
-		if (newComponentsToProcess.length) {
+		if (out[component]) {
 
-			componentsToProcess = componentsToProcess.concat(newComponentsToProcess);
+			each(out[component], (files, type) => {
+
+				if (type === "js") {
+
+					const jsKeys = Object.keys(files);
+
+					jsKeys.forEach((key) => {
+
+						const keyParts = key.split(".");
+
+						for (let i = 2; i < keyParts.length; i++) {
+
+							const parentPath = keyParts.slice(0, i).join(".");
+
+							if (!files[parentPath]) {
+
+								files[parentPath] = `${parentPath} = ${parentPath} || {}; `;
+							
+							}
+						
+						}
+					
+					});
+				
+				}
+
+				if (type === "js" && !files[`${namespace}.${component}`]) {
+
+					files[`${namespace}.${component}`] = `${namespace}.${component} = {}; `;
+				
+				}
+
+				files = Object.keys(files)
+					.sort()
+					.reduce((obj, key) => {
+
+						obj[key] = files[key];
+						
+						return obj;
+					
+					}, {});
+
+				if (showDetails) {
+
+					out[component][type + "_details"] = files;
+				
+				}
+
+				out[component][type] = ` ${Object.values(files).join("\n")} `;
+			
+			});
 		
 		}
 	
