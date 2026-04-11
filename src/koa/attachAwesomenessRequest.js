@@ -12,11 +12,7 @@ export default async function attachAwesomenessRequest(ctx, next) {
 
 	const routes = awesomenessConfig.specialRoutes[ctx.awesomenessRequest.site] || [];
 
-	if(ctx.awesomenessRequest.awesomenessType === 'page'){
-
-		await specialPaths(ctx.awesomenessRequest, routes);
-
-	}
+	await specialPaths(ctx.awesomenessRequest, routes);
 	
 	await next();
 	

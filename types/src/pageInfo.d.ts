@@ -1,5 +1,5 @@
 export default function pageInfo(awesomenessRequest: any, { page }?: {
-    page?: any;
+    page?: null | undefined;
 }): Promise<{
     getData: any;
     about: any;

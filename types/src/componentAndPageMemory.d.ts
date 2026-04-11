@@ -3,16 +3,16 @@ export function extractUiRefsMemoized(content: any, options?: {}): any;
 export function extractUiRefsFromFileMemoized(filePath: any, options?: {}): any;
 export function clearComponentAndPageMemory(): void;
 export function getComponentAndPageMemoryStatus({ includeKeys, sampleSize, }?: {
-    includeKeys?: boolean;
-    sampleSize?: number;
+    includeKeys?: boolean | undefined;
+    sampleSize?: number | undefined;
 }): {
     limits: {
         fileCacheLimit: number;
         refsCacheLimit: number;
     };
     counts: {
-        fileCacheEntries: any;
-        refsCacheEntries: any;
+        fileCacheEntries: number;
+        refsCacheEntries: number;
     };
     approximateBytes: {
         fileCacheBytes: number;
@@ -63,7 +63,7 @@ export function getComponentAndPageMemoryStatus({ includeKeys, sampleSize, }?: {
             mb: number;
             gb: number;
         };
-    };
+    } | null;
 };
 export default componentAndPageMemory;
 declare namespace componentAndPageMemory {
