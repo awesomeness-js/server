@@ -11,42 +11,7 @@ import { extractUiRefsFromFileMemoized, extractUiRefsMemoized } from "./componen
 const componentNamespace = "ui";
 const pageNamespaceBase = `app.pages`;
 
-function pageNamespaceInit(pageFnName) {
 
-	const parts = pageFnName.split(".");
-	const inits = [];
-
-
-	for (let i = 2; i < parts.length - 1; i++) {
-
-		let expr = parts[0];
-
-
-		for (let j = 1; j <= i; j++) {
-
-			const p = parts[j];
-
-
-			if (isValidIdentifier(p)) {
-
-				expr += "." + p;
-			
-			} else {
-
-				expr += `["${p}"]`;
-			
-			}
-		
-		}
-
-		inits.push(`${expr} = ${expr} || {};`);
-	
-	}
-
-	
-	return inits.join("\n");
-
-}
 
 
 export default async function fetchPage(
@@ -107,18 +72,33 @@ export default async function fetchPage(
 
 		for (let i = 2; i < parts.length - 1; i++) {
 
-			// Build up the namespace path using correct notation
-			let expr = parts.slice(0, i + 1).map((p) =>
-				isValidIdentifier(p) ? p : `["${p}"]`
-			).join("");
+			let expr = parts[0];
+
+
+			for (let j = 1; j <= i; j++) {
+
+				const p = parts[j];
+
+
+				if (isValidIdentifier(p)) {
+
+					expr += "." + p;
+			
+				} else {
+
+					expr += `["${p}"]`;
+			
+				}
+		
+			}
 
 			inits.push(`${expr} = ${expr} || {};`);
-		
+	
 		}
 
-		
-		return inits.join("\n");
 	
+		return inits.join("\n");
+
 	}
 
 	function collectComponentsFromPageFiles() {
