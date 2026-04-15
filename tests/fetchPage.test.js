@@ -256,4 +256,44 @@ describe("fetchPage component inference", () => {
 	
 	});
 
+	it("handles pages with dashes in their names (uses bracket notation)", async () => {
+
+		const awesomenessRequest = {
+			site: "site-a",
+			pageRoute: "mortgage-calculator",
+			meta: {
+				pages: {},
+				components: {},
+			},
+			updatedMeta: {
+				pages: {},
+				components: {},
+			},
+			user: {
+				permissions: [ "*" ],
+			},
+		};
+
+		// Simulate pageInfo for a page with a dash in the name
+		mocks.pageInfo.mockResolvedValueOnce({
+			about: {
+				version: "1.0.0",
+				permissions: [],
+				components: [ "card" ],
+			},
+			cssPath,
+			jsPath,
+			getData: async () => ({ ok: true }),
+		});
+
+		const out = await fetchPage(awesomenessRequest, {});
+
+		expect(out).toEqual({ ok: true });
+		expect(mocks.componentDependencies).toHaveBeenCalledTimes(1);
+
+		// The test here is mainly to ensure no error is thrown and the call completes
+		// For deeper validation, you could spy on the namespace init logic if exposed
+
+	});
+
 });

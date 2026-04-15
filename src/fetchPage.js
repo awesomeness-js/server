@@ -54,21 +54,33 @@ export default async function fetchPage(
 		
 	}
 
+	function isValidIdentifier(name) {
+
+		// Valid JS identifier: starts with letter, $, or _, and contains only letters, numbers, $, _
+		return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name);
+	
+	}
+
 	function pageNamespaceInit(pageFnName) {
 
 		const parts = pageFnName.split(".");
 		const inits = [];
 
+
 		for (let i = 2; i < parts.length - 1; i++) {
 
-			inits.push(
-				`${parts.slice(0, i + 1).join(".")} = ${parts.slice(0, i + 1).join(".")} || {};`
-			);
+			// Build up the namespace path using correct notation
+			let expr = parts.slice(0, i + 1).map((p) =>
+				isValidIdentifier(p) ? p : `["${p}"]`
+			).join("");
+
+			inits.push(`${expr} = ${expr} || {};`);
 		
 		}
 
+		
 		return inits.join("\n");
-
+	
 	}
 
 	function collectComponentsFromPageFiles() {
