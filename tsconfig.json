@@ -4,7 +4,8 @@
 		"emitDeclarationOnly": true, // Only output .d.ts files
 		"allowJs": true, // Allows JS files
 		"outDir": "types", // Output directory for type files
-		"moduleResolution": "node",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"skipLibCheck": true,
 		"esModuleInterop": true,
 		"types": [

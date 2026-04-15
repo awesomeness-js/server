@@ -1,6 +1,6 @@
 export default awesomenessNormalizeRequest;
 export function awesomenessNormalizeRequest({ req }?: {
-    req?: {};
+    req?: {} | undefined;
 }): Promise<{
     headers: any;
     ip: any;
@@ -23,5 +23,5 @@ export function awesomenessNormalizeRequest({ req }?: {
     urlParams: {};
     _RAW: {};
     log: (message: any, data?: {}) => void;
-    logData: any[];
+    logData: never[];
 }>;
