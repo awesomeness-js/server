@@ -11,6 +11,44 @@ import { extractUiRefsFromFileMemoized, extractUiRefsMemoized } from "./componen
 const componentNamespace = "ui";
 const pageNamespaceBase = `app.pages`;
 
+function pageNamespaceInit(pageFnName) {
+
+	const parts = pageFnName.split(".");
+	const inits = [];
+
+
+	for (let i = 2; i < parts.length - 1; i++) {
+
+		let expr = parts[0];
+
+
+		for (let j = 1; j <= i; j++) {
+
+			const p = parts[j];
+
+
+			if (isValidIdentifier(p)) {
+
+				expr += "." + p;
+			
+			} else {
+
+				expr += `["${p}"]`;
+			
+			}
+		
+		}
+
+		inits.push(`${expr} = ${expr} || {};`);
+	
+	}
+
+	
+	return inits.join("\n");
+
+}
+
+
 export default async function fetchPage(
 	awesomenessRequest,
 	{
@@ -377,4 +415,6 @@ export default async function fetchPage(
 	
 	return pageData;
 
+
 }
+

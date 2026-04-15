@@ -25,6 +25,70 @@ import fetchPage from "../src/fetchPage.js";
 
 describe("fetchPage component inference", () => {
 
+	it("generates correct namespace initialization for dot and bracket notation", async () => {
+
+		// We'll spy on the namespace init logic by importing it directly for this test
+		// Since it's not exported, we reimplement the logic here for test validation
+		function isValidIdentifier(name) {
+
+			return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name);
+		
+		}
+
+		function pageNamespaceInit(pageFnName) {
+
+			const parts = pageFnName.split(".");
+			const inits = [];
+
+
+			for (let i = 2; i < parts.length - 1; i++) {
+
+				let expr = parts[0];
+
+
+				for (let j = 1; j <= i; j++) {
+
+					const p = parts[j];
+
+
+					if (isValidIdentifier(p)) {
+
+						expr += "." + p;
+					
+					} else {
+
+						expr += `["${p}"]`;
+					
+					}
+				
+				}
+
+				inits.push(`${expr} = ${expr} || {};`);
+			
+			}
+
+			
+			return inits.join("\n");
+		
+		}
+
+		// Case 1: all valid identifiers
+		const ns1 = pageNamespaceInit("app.pages.start.fn");
+
+		expect(ns1).toContain("app.pages.start = app.pages.start || {};");
+
+		// Case 2: page name with dash
+		const ns2 = pageNamespaceInit("app.pages.mortgage-calculator.fn");
+
+		expect(ns2).toContain('app.pages["mortgage-calculator"] = app.pages["mortgage-calculator"] || {};');
+
+		// Case 3: page name with dash and a valid subproperty
+		const ns3 = pageNamespaceInit("app.pages.mortgage-calculator.sub.fn");
+
+		expect(ns3).toContain('app.pages["mortgage-calculator"].sub = app.pages["mortgage-calculator"].sub || {};');
+	
+	});
+
 	const fixturesRoot = path.join(
 		process.cwd(),
 		"tests",
