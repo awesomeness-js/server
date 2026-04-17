@@ -8,8 +8,6 @@ export default async function getMD(relativePath, callerUrl) {
 
 		const callerDir = path.dirname(fileURLToPath(callerUrl));
 		const fullPath = path.resolve(callerDir, relativePath);
-
-		console.log(`Loading MD file from: ${fullPath}`);
     
 		return await readFile(fullPath, 'utf8');
 	
