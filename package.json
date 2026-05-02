@@ -1,6 +1,6 @@
 {
 	"name": "@awesomeness-js/server",
-	"version": "1.1.18",
+	"version": "1.1.19",
 	"description": "Awesomeness Multi-Site Server",
 	"author": "Scott Forte",
 	"type": "module",

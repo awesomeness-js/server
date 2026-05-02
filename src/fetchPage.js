@@ -57,6 +57,24 @@ export default async function fetchPage(
 		
 	}
 
+	function getPageNamespace(fnName){
+
+		// remove the last part to get the namespace
+		const parts = fnName.split(".");
+
+
+		if (parts.length > 1) {
+
+			return parts.slice(0, -1).join(".");
+		
+		} else {
+
+			return null;
+		
+		}
+		
+	}
+
 	function isValidIdentifier(name) {
 
 		// Valid JS identifier: starts with letter, $, or _, and contains only letters, numbers, $, _
@@ -261,16 +279,25 @@ export default async function fetchPage(
 					content, path 
 				}) => {
 
-					const fnName = pageFn(path, awesomenessRequest);
+					const fnName = pageFn(path);
 					const namespaceInit = pageNamespaceInit(fnName);
 
 					content = content.replaceAll(`import ui from '#ui';`, "");
 					content = content.replaceAll(`import ui from "#ui";`, "");
 
+					const pageName = awesomenessConfig?.pageImportName || "PAGE";
+
+					content = content.replaceAll(`import ${pageName} from '../${pageName}.js';`, "");
+					content = content.replaceAll(`import ${pageName} from "../${pageName}.js";`, "");
+
 					content = content.replaceAll("export default function", `${fnName} = function`);
 					content = content.replaceAll("export default async function", `${fnName} = async function`);
 					content = content.replaceAll("export default async", `${fnName} = async`);
 					content = content.replaceAll("export default", `${fnName} =`);
+					
+					const nameSpace = getPageNamespace(fnName);
+
+					content = content.replaceAll(pageName, nameSpace);
 
 					if (namespaceInit) {
 
