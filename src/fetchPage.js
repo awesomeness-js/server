@@ -35,6 +35,7 @@ export default async function fetchPage(
 			: awesomenessConfig.siteDir__URL;
 
 	const sitePagesRoot = path.join(sitesRootPath, awesomenessRequest.site, "pages");
+	const emittedNamespaces = new Set();
 
 	function pageFn(filePath){
 
@@ -110,7 +111,12 @@ export default async function fetchPage(
 		
 			}
 
-			inits.push(`${expr} = ${expr} || {};`);
+			if (!emittedNamespaces.has(expr)) {
+
+				inits.push(`${expr} = ${expr} || {};`);
+				emittedNamespaces.add(expr);
+
+			}
 	
 		}
 
