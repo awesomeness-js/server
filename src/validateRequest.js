@@ -91,18 +91,7 @@ export default async (awesomenessRequest) => {
 			
 			data.testing = testing;
 
-			if(!awesomenessRequest.cleanData){
-
-				awesomenessRequest.cleanData = {};
-		
-			}
-
-			// awesomenessRequest.cleanData = data;
-
-			awesomenessRequest.cleanData = {
-				... awesomenessRequest.cleanData,
-				... cleanedObject
-			};
+			Object.assign((awesomenessRequest.cleanData ??= {}), cleanedObject);
 		
 		}
 

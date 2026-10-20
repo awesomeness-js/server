@@ -19,6 +19,7 @@ export function awesomenessNormalizeRequest({ req }?: {
     testing: any;
     device: any;
     data: {};
+    cleanData: {};
     awesomenessType: any;
     urlParams: {};
     _RAW: {};
