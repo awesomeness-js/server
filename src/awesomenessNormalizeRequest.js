@@ -124,6 +124,7 @@ async function awesomenessNormalizeRequest({
 		},
 		device: req?.request?.body?.device ?? {},
 		data: newData,
+		cleanData: {},
 		awesomenessType: req?.request?.body?.awesomenessType ?? 'generic',
 
 		urlParams,
