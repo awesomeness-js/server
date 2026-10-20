@@ -91,7 +91,7 @@ export default async (awesomenessRequest) => {
 			
 			data.testing = testing;
 
-			Object.assign(awesomenessRequest.cleanData, cleanedObject);
+			Object.assign((awesomenessRequest.cleanData ??= {}), cleanedObject);
 		
 		}
 
