@@ -39,6 +39,7 @@ export default async (awesomenessRequest) => {
 			} else {
 
 				throw {
+					APP_SESSION: true,
 					message: 'session check failed',
 					error: e
 				};
