@@ -39,9 +39,8 @@ export default async (awesomenessRequest) => {
 			} else {
 
 				throw {
-					message: 'session check failed',
-					// tells the client to clear its stale session and reload
 					APP_SESSION: true,
+					message: 'session check failed',
 					error: e
 				};
 
