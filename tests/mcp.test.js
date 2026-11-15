@@ -78,12 +78,19 @@ describe("mcp middleware", () => {
 
 	});
 
-	it("answers 405 for GET and 401 without a user", async () => {
+	it("lets a page GET through, answers 405 for an SSE GET and 401 without a user", async () => {
 
 		const getCtx = ctxFor({ method: "GET" });
+		const pageNext = vi.fn();
 
-		await mcp({ authenticate })(getCtx, vi.fn());
-		expect(getCtx.status).toBe(405);
+		await mcp({ authenticate })(getCtx, pageNext);
+		expect(pageNext).toHaveBeenCalled();
+
+		const sseCtx = ctxFor({ method: "GET" });
+
+		sseCtx.headers.accept = "text/event-stream";
+		await mcp({ authenticate })(sseCtx, vi.fn());
+		expect(sseCtx.status).toBe(405);
 
 		const anonCtx = ctxFor({
 			body: {

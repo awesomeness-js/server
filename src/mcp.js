@@ -19,8 +19,10 @@ export default function mcp({
 	return async function mcpMiddleware(ctx, next) {
 
 		const awesomenessRequest = ctx.awesomenessRequest;
+		// a browser GET (no text/event-stream) falls through, so a page can live at the same URL
+		const pageGet = ctx.method === 'GET' && !String(ctx.headers?.accept || '').includes('text/event-stream');
 
-		if(awesomenessRequest?.path !== path){
+		if(awesomenessRequest?.path !== path || pageGet){
 
 			await next();
 
