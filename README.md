@@ -105,6 +105,14 @@ export default mcp({
 Tools come from the request's site (shared routes plus that site's `api/routes`). `siteMap` maps a request site to the site whose tools it serves; the request itself (`awesomenessRequest.site`, the application) is unchanged.
 
 `mcp()` marks the request authenticated, so `validateRequest` skips `checkSession`, and the dev access bypass never applies to MCP requests.
+
+## MCP internals
+
+- `mcpHandle` takes one JSON-RPC 2.0 message and returns one response, or `null` (HTTP 202) for a notification such as `notifications/initialized`.
+- `listMcpRoutes` keys tools by name (route path with `/` → `_`) and reads only `_info.js`; `mcpCallTool` imports `index.js` when the tool is called.
+- `infoToJsonSchema` accepts `_info.properties` as a `{ type: 'object', properties }` schema, a bare field map, or nothing.
+- Route failures from `mcpCallTool` come back as an `isError` result, never a stack. Unexpected errors are logged and answered as JSON-RPC `-32603 Internal error`; known JSON-RPC codes in `-32768..-32000` pass through.
+
 ## License
 
 This project is licensed under the Apache License 2.0.

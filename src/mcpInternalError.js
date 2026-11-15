@@ -1,5 +1,3 @@
-// The code and message a client may see for a thrown value. Known JSON-RPC errors (an integer code in the
-// reserved -32768..-32000 range) pass through; anything else is logged here and answered as a generic internal error.
 export default function mcpInternalError({
 	error,
 	method,

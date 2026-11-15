@@ -3,7 +3,6 @@ import os from "os";
 import path from "path";
 import { pathToFileURL } from "url";
 
-// Temp sites/ + api/ folders with a few routes, and the config that points at them.
 export default async function mcpFixture() {
 
 	const root = await mkdtemp(path.join(os.tmpdir(), "awesomeness-mcp-"));

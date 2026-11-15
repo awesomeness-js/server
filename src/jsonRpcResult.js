@@ -1,4 +1,3 @@
-// A JSON-RPC 2.0 success response.
 export default function jsonRpcResult({
 	id = null,
 	result,

@@ -3,9 +3,6 @@ import { promises as fs } from 'fs';
 import { fileURLToPath, pathToFileURL } from 'url';
 import getConfig from './getConfig.js';
 
-// Find an API route for a site. The site's own route wins over the shared one.
-// Returns { index, indexPath, info, specific, siteSpecificRoute, genericRoute }; index is null when neither exists.
-// infoOnly reads _info.js without importing index.js (indexPath is still set).
 export default async function resolveApiRoute({
 	site,
 	route,

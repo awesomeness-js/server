@@ -4,9 +4,6 @@ import { fileURLToPath } from 'url';
 import getConfig from './getConfig.js';
 import resolveApiRoute from './resolveApiRoute.js';
 
-// API routes exposed over MCP for a site, keyed by tool name (route path with "/" -> "_").
-// Only routes whose _info.js has `mcp: true`; index.js is imported only when a tool is called. A site route overrides the shared route on the
-// same path, so a site can replace or hide a shared tool.
 export default async function listMcpRoutes({ site }) {
 
 	const {

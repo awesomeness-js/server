@@ -1,4 +1,3 @@
-// A JSON-RPC 2.0 error response.
 export default function jsonRpcError({
 	id = null,
 	code,

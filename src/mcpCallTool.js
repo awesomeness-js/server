@@ -2,8 +2,6 @@ import { pathToFileURL } from 'url';
 import listMcpRoutes from './listMcpRoutes.js';
 import validateRequest from './validateRequest.js';
 
-// Run one MCP tool: the marked route, through the same validateRequest (permissions + clean.object)
-// and route handler as an HTTP API call. Route failures come back as an isError result, never a stack.
 export default async function mcpCallTool({
 	name,
 	args,

@@ -1,4 +1,3 @@
-// The MCP initialize result: the client's protocol version when supported, else the newest one.
 export default function mcpInitialize({
 	params = {},
 	serverInfo = null,

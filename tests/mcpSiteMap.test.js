@@ -122,7 +122,11 @@ it("tools/call through a mapped host runs the mapped site's routes", async () =>
 		route: "shared/echo",
 		userId: "u1"
 	});
-	// hidden by the mapped site, but still a tool on the unmapped host
+
+});
+
+it("a tool the mapped site hides is still listed on the unmapped host", async () => {
+
 	expect((await call("hideme")).error.code).toBe(-32602);
 	expect((await call("hideme", { siteMap: {} })).result).toBeDefined();
 

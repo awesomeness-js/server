@@ -14,7 +14,6 @@ export default async ({
 
 	if(!hasPermission){
 
-		// MCP requests never take the dev bypass: a token only gets what its user is allowed.
 		if(
 			process.env.NODE_ENV === 'development'
 			&& awesomenessConfig.byPassAccessRequirementsInDev === true

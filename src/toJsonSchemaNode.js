@@ -1,4 +1,3 @@
-// Convert one property from the _info.js schema dialect (what clean.object reads) to JSON Schema.
 export default function toJsonSchemaNode(node = {}) {
 
 	const formats = {

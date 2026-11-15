@@ -1,10 +1,5 @@
 import mcpHandle from './mcpHandle.js';
 
-// MCP endpoint as Koa middleware for beforeRouteMiddleware (Streamable HTTP, stateless, JSON responses).
-// Exposes every API route whose _info.js has `mcp: true` for the request's site.
-// authenticate(awesomenessRequest) returns the caller's user ({ id, permissions, ... }) or nothing (401).
-// It may throw { status, message } (e.g. 429 when rate limited) to answer with that status instead.
-// siteMap ({ [requestSite]: toolSite }) lets one host serve another site's tools, e.g. an API subdomain.
 export default function mcp({
 	authenticate,
 	path = '/mcp',
@@ -21,7 +16,6 @@ export default function mcp({
 	return async function mcpMiddleware(ctx, next) {
 
 		const awesomenessRequest = ctx.awesomenessRequest;
-		// a browser GET (no text/event-stream) falls through, so a page can live at the same URL
 		const pageGet = ctx.method === 'GET' && !String(ctx.headers?.accept || '').includes('text/event-stream');
 
 		if(awesomenessRequest?.path !== path || pageGet){

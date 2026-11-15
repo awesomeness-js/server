@@ -5,8 +5,6 @@ import jsonRpcResult from './jsonRpcResult.js';
 import mcpInternalError from './mcpInternalError.js';
 import mcpInitialize from './mcpInitialize.js';
 
-// One JSON-RPC 2.0 message in, one response out (null for notifications).
-// Stateless MCP: initialize, ping, tools/list, tools/call. No sessions, no SSE.
 export default async function mcpHandle({
 	message,
 	awesomenessRequest,
@@ -33,9 +31,10 @@ export default async function mcpHandle({
 
 	}
 
-	if(message.id === undefined){
+	const isNotification = message.id === undefined;
 
-		// notification, e.g. notifications/initialized
+	if(isNotification){
+
 		return null;
 
 	}
