@@ -74,10 +74,12 @@ export default async function mcpHandle({
 
 		if(message.method === 'tools/list'){
 
-			return reply({ tools: await mcpListTools({
-				awesomenessRequest,
-				site
-			}) });
+			return reply({
+				tools: await mcpListTools({
+					awesomenessRequest,
+					site
+				}) 
+			});
 
 		}
 
