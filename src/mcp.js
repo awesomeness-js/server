@@ -2,7 +2,8 @@ import mcpHandle from './mcpHandle.js';
 
 // MCP endpoint as Koa middleware for beforeRouteMiddleware (Streamable HTTP, stateless, JSON responses).
 // Exposes every API route whose _info.js has `mcp: true` for the request's site.
-// authenticate(awesomenessRequest) returns the caller's user ({ id, permissions, ... }) or nothing for a 401.
+// authenticate(awesomenessRequest) returns the caller's user ({ id, permissions, ... }) or nothing (401).
+// It may throw { status, message } (e.g. 429 when rate limited) to answer with that status instead.
 export default function mcp({
 	authenticate,
 	path = '/mcp',
@@ -27,46 +28,46 @@ export default function mcp({
 
 		}
 
-		if(ctx.method !== 'POST'){
+		const refuse = (status, message) => {
 
-			ctx.set('Allow', 'POST');
-			ctx.status = 405;
+			ctx.status = status;
 			ctx.body = {
 				jsonrpc: '2.0',
 				id: null,
 				error: {
 					code: -32000,
-					message: 'Method not allowed'
-				}
+					message,
+				},
 			};
+
+		};
+
+		if(ctx.method !== 'POST'){
+
+			ctx.set('Allow', 'POST');
+			refuse(405, 'Method not allowed');
 
 			return;
 
 		}
 
-		// a throwing authenticate counts as no user
-		const user = await Promise.resolve(awesomenessRequest)
+		const auth = await Promise.resolve(awesomenessRequest)
 			.then(authenticate)
-			.catch(() => null);
+			.then((user) => ({ user }))
+			.catch((error) => ({ error }));
 
-		if(!user){
+		if(!auth.user){
+
+			const status = Number.isInteger(auth.error?.status) ? auth.error.status : 401;
 
 			ctx.set('WWW-Authenticate', 'Bearer');
-			ctx.status = 401;
-			ctx.body = {
-				jsonrpc: '2.0',
-				id: null,
-				error: {
-					code: -32001,
-					message: 'Unauthorized'
-				}
-			};
+			refuse(status, status === 401 ? 'Unauthorized' : (auth.error?.message || 'Refused'));
 
 			return;
 
 		}
 
-		awesomenessRequest.user = user;
+		awesomenessRequest.user = auth.user;
 		awesomenessRequest.authenticated = true;
 		awesomenessRequest.mcp = true;
 

@@ -93,7 +93,8 @@ Turn it on with one `beforeRouteMiddleware` entry. The app supplies only `authen
 import { mcp } from '@awesomeness-js/server';
 
 export default mcp({
-	// return the caller's user ({ id, permissions, ... }) or nothing for a 401
+	// return the caller's user ({ id, permissions, ... }) or nothing for a 401;
+	// throw { status: 429, message } (or another status) to refuse with that status
 	authenticate: async (awesomenessRequest) => { return lookUpToken(awesomenessRequest.headers.authorization); },
 	path: '/mcp', // default
 });

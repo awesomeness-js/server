@@ -152,4 +152,30 @@ describe("mcp middleware", () => {
 
 	});
 
+	it("uses the status authenticate throws, e.g. 429", async () => {
+
+		const ctx = ctxFor({
+			body: {
+				jsonrpc: "2.0",
+				id: 3,
+				method: "ping" 
+			} 
+		});
+
+		await mcp({
+			authenticate: async () => {
+
+				throw {
+					status: 429,
+					message: "Too many requests" 
+				}; 
+
+			} 
+		})(ctx, vi.fn());
+
+		expect(ctx.status).toBe(429);
+		expect(ctx.body.error.message).toBe("Too many requests");
+
+	});
+
 });
