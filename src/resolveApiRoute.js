@@ -4,10 +4,12 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import getConfig from './getConfig.js';
 
 // Find an API route for a site. The site's own route wins over the shared one.
-// Returns { index, info, specific, siteSpecificRoute, genericRoute }; index is null when neither exists.
+// Returns { index, indexPath, info, specific, siteSpecificRoute, genericRoute }; index is null when neither exists.
+// infoOnly reads _info.js without importing index.js (indexPath is still set).
 export default async function resolveApiRoute({
 	site,
 	route,
+	infoOnly = false,
 }) {
 
 	const {
@@ -26,6 +28,7 @@ export default async function resolveApiRoute({
 
 	const found = {
 		index: null,
+		indexPath: null,
 		info: null,
 		specific: false,
 		siteSpecificRoute: path.join(siteDir, 'index.js'),
@@ -54,17 +57,7 @@ export default async function resolveApiRoute({
 		const indexPath = path.join(candidate.dir, 'index.js');
 		const infoPath = path.join(candidate.dir, '_info.js');
 
-		const exists = await Promise.all([ fs.access(indexPath), fs.access(infoPath) ])
-			.then(() => {
-
-				return true;
-
-			})
-			.catch(() => {
-
-				return false;
-
-			});
+		const exists = await Promise.all([ fs.access(indexPath), fs.access(infoPath) ]).then(() => true, () => false);
 
 		if(!exists){
 
@@ -74,7 +67,8 @@ export default async function resolveApiRoute({
 
 		try {
 
-			found.index = await import(pathToFileURL(indexPath).href);
+			found.indexPath = indexPath;
+			found.index = infoOnly ? null : await import(pathToFileURL(indexPath).href);
 			found.info = (await import(pathToFileURL(infoPath).href)).default;
 			found.specific = candidate.specific;
 

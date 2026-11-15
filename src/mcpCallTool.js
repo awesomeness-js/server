@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url';
 import listMcpRoutes from './listMcpRoutes.js';
 import validateRequest from './validateRequest.js';
 
@@ -32,7 +33,8 @@ export default async function mcpCallTool({
 
 		await validateRequest(awesomenessRequest);
 
-		const result = (await tool.index.default(awesomenessRequest)) ?? {};
+		const index = await import(pathToFileURL(tool.indexPath).href);
+		const result = (await index.default(awesomenessRequest)) ?? {};
 		const isObject = typeof result === 'object' && !Array.isArray(result);
 
 		return {

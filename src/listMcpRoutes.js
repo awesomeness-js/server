@@ -5,7 +5,7 @@ import getConfig from './getConfig.js';
 import resolveApiRoute from './resolveApiRoute.js';
 
 // API routes exposed over MCP for a site, keyed by tool name (route path with "/" -> "_").
-// Only routes whose _info.js has `mcp: true`. A site route overrides the shared route on the
+// Only routes whose _info.js has `mcp: true`; index.js is imported only when a tool is called. A site route overrides the shared route on the
 // same path, so a site can replace or hide a shared tool.
 export default async function listMcpRoutes({ site }) {
 
@@ -58,13 +58,14 @@ export default async function listMcpRoutes({ site }) {
 		const resolved = await resolveApiRoute({
 			site,
 			route,
+			infoOnly: true,
 		}).catch(() => {
 
 			return null;
 
 		});
 
-		if(resolved?.index && resolved.info?.mcp === true){
+		if(resolved?.indexPath && resolved.info?.mcp === true){
 
 			const name = route.split('/').join('_');
 
@@ -72,7 +73,7 @@ export default async function listMcpRoutes({ site }) {
 				name,
 				route,
 				info: resolved.info,
-				index: resolved.index,
+				indexPath: resolved.indexPath,
 				specific: resolved.specific,
 			};
 

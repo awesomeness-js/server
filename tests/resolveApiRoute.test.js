@@ -70,4 +70,18 @@ describe("resolveApiRoute", () => {
 
 	});
 
+	it("reads only _info.js with infoOnly", async () => {
+
+		const found = await resolveApiRoute({
+			site: "site-a",
+			route: "shared/echo",
+			infoOnly: true
+		});
+
+		expect(found.index).toBeNull();
+		expect(found.indexPath).toContain("echo");
+		expect(found.info.description).toBe("Echo text");
+
+	});
+
 });
