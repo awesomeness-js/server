@@ -1,5 +1,9 @@
 import mcpListTools from './mcpListTools.js';
 import mcpCallTool from './mcpCallTool.js';
+import jsonRpcError from './jsonRpcError.js';
+import jsonRpcResult from './jsonRpcResult.js';
+import mcpInternalError from './mcpInternalError.js';
+import mcpInitialize from './mcpInitialize.js';
 
 // One JSON-RPC 2.0 message in, one response out (null for notifications).
 // Stateless MCP: initialize, ping, tools/list, tools/call. No sessions, no SSE.
@@ -10,31 +14,18 @@ export default async function mcpHandle({
 	site = awesomenessRequest?.site,
 }) {
 
-	const supported = [ '2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05' ];
 	const id = message?.id ?? null;
 
-	const reply = (result) => {
+	const reply = (result) => jsonRpcResult({
+		id,
+		result
+	});
 
-		return {
-			jsonrpc: '2.0',
-			id,
-			result
-		};
-
-	};
-
-	const fail = (code, text) => {
-
-		return {
-			jsonrpc: '2.0',
-			id,
-			error: {
-				code,
-				message: text
-			}
-		};
-
-	};
+	const fail = (code, text) => jsonRpcError({
+		id,
+		code,
+		message: text
+	});
 
 	if(!message || Array.isArray(message) || message.jsonrpc !== '2.0' || typeof message.method !== 'string'){
 
@@ -55,14 +46,11 @@ export default async function mcpHandle({
 
 		if(message.method === 'initialize'){
 
-			return reply({
-				protocolVersion: supported.includes(params.protocolVersion) ? params.protocolVersion : supported[0],
-				capabilities: { tools: { listChanged: false } },
-				serverInfo: serverInfo || {
-					name: awesomenessRequest.site,
-					version: '1.0.0',
-				},
-			});
+			return reply(mcpInitialize({
+				params,
+				serverInfo,
+				awesomenessRequest
+			}));
 
 		}
 
@@ -98,7 +86,12 @@ export default async function mcpHandle({
 
 	} catch(error){
 
-		return fail(error?.code ?? -32603, error?.message || 'Internal error');
+		const safe = mcpInternalError({
+			error,
+			method: message.method
+		});
+
+		return fail(safe.code, safe.message);
 
 	}
 

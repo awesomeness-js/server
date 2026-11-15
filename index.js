@@ -16,6 +16,8 @@ import _getConfig from './src/getConfig.js';
 import _getMD from './src/getMD.js';
 import _infoToJsonSchema from './src/infoToJsonSchema.js';
 import _init from './src/init.js';
+import _jsonRpcError from './src/jsonRpcError.js';
+import _jsonRpcResult from './src/jsonRpcResult.js';
 import _koa_attachAwesomenessRequest from './src/koa/attachAwesomenessRequest.js';
 import _koa_cors from './src/koa/cors.js';
 import _koa_errorHandler from './src/koa/errorHandler.js';
@@ -29,6 +31,8 @@ import _listMcpRoutes from './src/listMcpRoutes.js';
 import _mcp from './src/mcp.js';
 import _mcpCallTool from './src/mcpCallTool.js';
 import _mcpHandle from './src/mcpHandle.js';
+import _mcpInitialize from './src/mcpInitialize.js';
+import _mcpInternalError from './src/mcpInternalError.js';
 import _mcpListTools from './src/mcpListTools.js';
 import _pageInfo from './src/pageInfo.js';
 import _reRoute from './src/reRoute.js';
@@ -54,10 +58,14 @@ export { _getConfig as getConfig };
 export { _getMD as getMD };
 export { _infoToJsonSchema as infoToJsonSchema };
 export { _init as init };
+export { _jsonRpcError as jsonRpcError };
+export { _jsonRpcResult as jsonRpcResult };
 export { _listMcpRoutes as listMcpRoutes };
 export { _mcp as mcp };
 export { _mcpCallTool as mcpCallTool };
 export { _mcpHandle as mcpHandle };
+export { _mcpInitialize as mcpInitialize };
+export { _mcpInternalError as mcpInternalError };
 export { _mcpListTools as mcpListTools };
 export { _pageInfo as pageInfo };
 export { _reRoute as reRoute };
@@ -100,10 +108,14 @@ export default {
 	getMD: _getMD,
 	infoToJsonSchema: _infoToJsonSchema,
 	init: _init,
+	jsonRpcError: _jsonRpcError,
+	jsonRpcResult: _jsonRpcResult,
 	listMcpRoutes: _listMcpRoutes,
 	mcp: _mcp,
 	mcpCallTool: _mcpCallTool,
 	mcpHandle: _mcpHandle,
+	mcpInitialize: _mcpInitialize,
+	mcpInternalError: _mcpInternalError,
 	mcpListTools: _mcpListTools,
 	pageInfo: _pageInfo,
 	reRoute: _reRoute,

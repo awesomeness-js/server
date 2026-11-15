@@ -79,7 +79,7 @@ export default function mcp({
 			message: ctx.request.body,
 			awesomenessRequest,
 			serverInfo,
-			site: siteMap?.[awesomenessRequest.site] || awesomenessRequest.site,
+			site: siteMap && Object.hasOwn(siteMap, awesomenessRequest.site) ? siteMap[awesomenessRequest.site] : awesomenessRequest.site,
 		});
 
 		if(response === null){

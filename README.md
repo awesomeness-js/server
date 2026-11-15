@@ -102,7 +102,7 @@ export default mcp({
 });
 ```
 
-`Tools come from the request's site (shared routes plus that site's `api/routes`). `siteMap` maps a request site to the site whose tools it serves; the request itself (`awesomenessRequest.site`, the application) is unchanged.
+Tools come from the request's site (shared routes plus that site's `api/routes`). `siteMap` maps a request site to the site whose tools it serves; the request itself (`awesomenessRequest.site`, the application) is unchanged.
 
 `mcp()` marks the request authenticated, so `validateRequest` skips `checkSession`, and the dev access bypass never applies to MCP requests.
 ## License
