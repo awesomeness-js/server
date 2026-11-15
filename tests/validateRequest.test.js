@@ -46,4 +46,15 @@ describe("validateRequest session check", () => {
 
 	});
 
+	it("skips checkSession when mcp() already authenticated the caller", async () => {
+
+		await expect(validateRequest({
+			authenticated: true,
+			data: {},
+			user: { permissions: [ "user" ] },
+			routeInfo: { permissions: [ "user" ] },
+		})).resolves.toBe(true);
+
+	});
+
 });

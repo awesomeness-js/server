@@ -13,9 +13,14 @@ export default async (awesomenessRequest) => {
 
 	// IS SESSION VALID	
 
+	// mcp() already authenticated the caller with its own authenticate callback
 	try {
 
-		await awesomenessConfig.checkSession(awesomenessRequest);
+		if(awesomenessRequest.authenticated !== true){
+
+			await awesomenessConfig.checkSession(awesomenessRequest);
+
+		}
 
 
 	} catch(e){

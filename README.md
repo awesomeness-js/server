@@ -69,6 +69,37 @@ If a public static file is not found
 
 
 
+# MCP (Model Context Protocol)
+
+Any API route can be an MCP tool. Add `mcp: true` to its `_info.js`:
+
+```js
+export default {
+	description: 'Get a Bible passage',   // tool description
+	permissions: [ '*' ],                 // who may call it (unchanged)
+	mcp: true,                            // exposed over MCP; absent = not exposed
+	properties: { type: 'object', properties: { ... } }, // tool inputSchema
+};
+```
+
+- Tool name = route path with `/` -> `_` (`bible/passage` -> `bible_passage`).
+- Shared `api/routes` and `sites/<site>/api/routes` are both scanned; a site route overrides the shared route on the same path (and hides it if the site version is not marked).
+- Calls run through the same `validateRequest` (permissions + `clean.object`) and route `index.js` as `awesomenessType: 'api'` requests. `tools/list` only shows tools the caller's `user.permissions` allow.
+- Transport: stateless Streamable HTTP, JSON responses (no SSE). Methods: `initialize`, `ping`, `tools/list`, `tools/call`; notifications get `202`.
+
+Turn it on with one `beforeRouteMiddleware` entry. The app supplies only `authenticate`:
+
+```js
+import { mcp } from '@awesomeness-js/server';
+
+export default mcp({
+	// return the caller's user ({ id, permissions, ... }) or nothing for a 401
+	authenticate: async (awesomenessRequest) => { return lookUpToken(awesomenessRequest.headers.authorization); },
+	path: '/mcp', // default
+});
+```
+
+`mcp()` marks the request authenticated, so `validateRequest` skips `checkSession`, and the dev access bypass never applies to MCP requests.
 ## License
 
 This project is licensed under the Apache License 2.0.
