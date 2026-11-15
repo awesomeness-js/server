@@ -15,7 +15,11 @@ export default async (awesomenessRequest) => {
 
 	try {
 
-		await awesomenessConfig.checkSession(awesomenessRequest);
+		if(awesomenessRequest.authenticated !== true){
+
+			await awesomenessConfig.checkSession(awesomenessRequest);
+
+		}
 
 
 	} catch(e){
