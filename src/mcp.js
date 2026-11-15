@@ -4,10 +4,12 @@ import mcpHandle from './mcpHandle.js';
 // Exposes every API route whose _info.js has `mcp: true` for the request's site.
 // authenticate(awesomenessRequest) returns the caller's user ({ id, permissions, ... }) or nothing (401).
 // It may throw { status, message } (e.g. 429 when rate limited) to answer with that status instead.
+// siteMap ({ [requestSite]: toolSite }) lets one host serve another site's tools, e.g. an API subdomain.
 export default function mcp({
 	authenticate,
 	path = '/mcp',
 	serverInfo = null,
+	siteMap = {},
 } = {}) {
 
 	if(typeof authenticate !== 'function'){
@@ -77,6 +79,7 @@ export default function mcp({
 			message: ctx.request.body,
 			awesomenessRequest,
 			serverInfo,
+			site: siteMap?.[awesomenessRequest.site] || awesomenessRequest.site,
 		});
 
 		if(response === null){

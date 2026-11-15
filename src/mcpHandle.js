@@ -7,6 +7,7 @@ export default async function mcpHandle({
 	message,
 	awesomenessRequest,
 	serverInfo,
+	site = awesomenessRequest?.site,
 }) {
 
 	const supported = [ '2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05' ];
@@ -73,7 +74,10 @@ export default async function mcpHandle({
 
 		if(message.method === 'tools/list'){
 
-			return reply({ tools: await mcpListTools({ awesomenessRequest }) });
+			return reply({ tools: await mcpListTools({
+				awesomenessRequest,
+				site
+			}) });
 
 		}
 
@@ -83,6 +87,7 @@ export default async function mcpHandle({
 				name: params.name,
 				args: params.arguments,
 				awesomenessRequest,
+				site,
 			}));
 
 		}

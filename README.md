@@ -97,8 +97,12 @@ export default mcp({
 	// throw { status: 429, message } (or another status) to refuse with that status
 	authenticate: async (awesomenessRequest) => { return lookUpToken(awesomenessRequest.headers.authorization); },
 	path: '/mcp', // default
+	// optional: serve another site's tools on this host, e.g. an API subdomain
+	siteMap: { 'api.example.com': 'example.com' },
 });
 ```
+
+`Tools come from the request's site (shared routes plus that site's `api/routes`). `siteMap` maps a request site to the site whose tools it serves; the request itself (`awesomenessRequest.site`, the application) is unchanged.
 
 `mcp()` marks the request authenticated, so `validateRequest` skips `checkSession`, and the dev access bypass never applies to MCP requests.
 ## License

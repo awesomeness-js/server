@@ -9,6 +9,7 @@
 - `authenticate(awesomenessRequest)` returns the caller's user, nothing (401 with `WWW-Authenticate: Bearer`), or throws `{ status, message }` (for example 429 when rate limited).
 - Tool calls run through the same `validateRequest` (permissions + `clean.object`) and route handler as HTTP API calls. Route errors come back as `isError` results, never stacks.
 - A browser `GET` on the MCP path (no `Accept: text/event-stream`) falls through to the page router, so a page can share the URL (for example a token page at `/mcp`). SSE `GET` and other methods get 405.
+- `siteMap` (`{ [requestSite]: toolSite }`) lets one host serve another site's tools, for example `mcp({ authenticate, siteMap: { 'api.example.com': 'example.com' } })`. The request's own site and application are unchanged.
 - `tools/list` reads only `_info.js`; a route's `index.js` is imported when the tool is called.
 - New exports: `mcp`, `mcpHandle`, `mcpListTools`, `mcpCallTool`, `listMcpRoutes`, `resolveApiRoute`, `infoToJsonSchema`, `toJsonSchemaNode`.
 

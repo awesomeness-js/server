@@ -2,9 +2,12 @@ import listMcpRoutes from './listMcpRoutes.js';
 import infoToJsonSchema from './infoToJsonSchema.js';
 
 // MCP tool descriptors for the marked routes this caller may use (route permissions vs user.permissions).
-export default async function mcpListTools({ awesomenessRequest }) {
+export default async function mcpListTools({
+	awesomenessRequest,
+	site = awesomenessRequest.site,
+}) {
 
-	const routes = await listMcpRoutes({ site: awesomenessRequest.site });
+	const routes = await listMcpRoutes({ site });
 	const userPermissions = awesomenessRequest.user?.permissions || [];
 	const tools = [];
 
