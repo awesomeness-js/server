@@ -12,7 +12,7 @@
 - `siteMap` (`{ [requestSite]: toolSite }`) lets one host serve another site's tools, for example `mcp({ authenticate, siteMap: { 'api.example.com': 'example.com' } })`. The request's own site and application are unchanged.
 - Unexpected errors while handling an MCP message are logged server-side (`console.error`) and answered as JSON-RPC `-32603 Internal error`. Only JSON-RPC errors (integer codes -32768..-32000, e.g. `-32602 Unknown tool`) reach the client as thrown.
 - `tools/list` reads only `_info.js`; a route's `index.js` is imported when the tool is called.
-- New exports: `mcp`, `mcpHandle`, `mcpListTools`, `mcpCallTool`, `listMcpRoutes`, `resolveApiRoute`, `infoToJsonSchema`, `toJsonSchemaNode`.
+- New exports: `mcp`, `mcpHandle`, `mcpListTools`, `mcpCallTool`, `listMcpRoutes`, `resolveApiRoute`, `infoToJsonSchema`, `toJsonSchemaNode`, `jsonRpcError`, `jsonRpcResult`, `mcpInitialize`, `mcpInternalError`.
 
 ### Changed
 
