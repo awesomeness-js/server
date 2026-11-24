@@ -19,6 +19,7 @@ export default async function mcpFixture() {
 
 	const shared = path.join("api", "routes");
 	const site = path.join("sites", "site-a", "api", "routes");
+	const publishedSites = [ "site-a", "site-b", "api.site-a", "constructor" ];
 	const text = {
 		type: "object",
 		properties: {
@@ -34,7 +35,8 @@ export default async function mcpFixture() {
 		description: "Echo text",
 		permissions: [ "*" ],
 		mcp: true,
-		properties: text
+		properties: text,
+		publishDocs: publishedSites
 	});
 	await route(shared, "shared/hidden", {
 		description: "Not exposed",
@@ -45,19 +47,22 @@ export default async function mcpFixture() {
 		description: "Admin only",
 		permissions: [ "admin" ],
 		mcp: true,
-		properties: {}
+		properties: {},
+		publishDocs: publishedSites
 	});
 	await route(shared, "user/thing", {
 		description: "Users",
 		permissions: [ "user" ],
 		mcp: true,
-		properties: {}
+		properties: {},
+		publishDocs: publishedSites
 	});
 	await route(shared, "override/me", {
 		description: "shared version",
 		permissions: [ "*" ],
 		mcp: true,
-		properties: {}
+		properties: {},
+		publishDocs: publishedSites
 	});
 	await route(site, "override/me", {
 		description: "site version",
@@ -69,7 +74,8 @@ export default async function mcpFixture() {
 		description: "shared marked",
 		permissions: [ "*" ],
 		mcp: true,
-		properties: {}
+		properties: {},
+		publishDocs: publishedSites
 	});
 	await route(site, "hideme", {
 		description: "site unmarked",
@@ -80,8 +86,42 @@ export default async function mcpFixture() {
 		description: "Throws",
 		permissions: [ "*" ],
 		mcp: true,
-		properties: {}
+		properties: {},
+		publishDocs: publishedSites
 	}, "async () => { throw new Error('kaboom'); }");
+	await route(shared, "common/untagged", {
+		description: "untagged common",
+		permissions: [ "*" ],
+		mcp: true,
+		properties: {}
+	});
+	await route(shared, "common/empty", {
+		description: "empty publishDocs",
+		permissions: [ "*" ],
+		mcp: true,
+		publishDocs: [],
+		properties: {}
+	});
+	await route(shared, "common/other", {
+		description: "other site only",
+		permissions: [ "*" ],
+		mcp: true,
+		publishDocs: [ "other-site" ],
+		properties: {}
+	});
+	await route(shared, "common/listed", {
+		description: "listed for site-a",
+		permissions: [ "*" ],
+		mcp: true,
+		publishDocs: [ "site-a" ],
+		properties: {}
+	});
+	await route(site, "siteonly/local", {
+		description: "site-local untagged",
+		permissions: [ "*" ],
+		mcp: true,
+		properties: {}
+	});
 
 	const config = {
 		siteDir__URL: pathToFileURL(path.join(root, "sites") + path.sep),

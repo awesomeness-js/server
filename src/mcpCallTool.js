@@ -7,9 +7,16 @@ export default async function mcpCallTool({
 	args,
 	awesomenessRequest,
 	site = awesomenessRequest.site,
+	ctx,
+	routeFilter,
 }) {
 
-	const routes = await listMcpRoutes({ site });
+	const routes = await listMcpRoutes({
+		site,
+		awesomenessRequest,
+		ctx,
+		routeFilter,
+	});
 	const tool = routes[name];
 
 	if(!tool){

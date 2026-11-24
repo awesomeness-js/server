@@ -100,7 +100,7 @@ describe("mcpHandle", () => {
 
 		}).sort();
 
-		expect(names).toEqual([ "boom", "override_me", "shared_echo", "user_thing" ]);
+		expect(names).toEqual([ "boom", "common_listed", "override_me", "shared_echo", "siteonly_local", "user_thing" ]);
 
 		const echo = res.result.tools.find((tool) => {
 

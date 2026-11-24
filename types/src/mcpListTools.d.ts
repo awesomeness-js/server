@@ -1,6 +1,8 @@
-export default function mcpListTools({ awesomenessRequest, site, }: {
+export default function mcpListTools({ awesomenessRequest, site, ctx, routeFilter, }: {
     awesomenessRequest: any;
-    site?: string;
+    site?: any;
+    ctx: any;
+    routeFilter: any;
 }): Promise<{
     name: any;
     description: any;

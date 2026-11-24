@@ -37,7 +37,7 @@ describe("listMcpRoutes", () => {
 
 		const routes = await listMcpRoutes({ site: "site-a" });
 
-		expect(Object.keys(routes).sort()).toEqual([ "admin_only", "boom", "override_me", "shared_echo", "user_thing" ]);
+		expect(Object.keys(routes).sort()).toEqual([ "admin_only", "boom", "common_listed", "override_me", "shared_echo", "siteonly_local", "user_thing" ]);
 		expect(routes.shared_echo.route).toBe("shared/echo");
 
 	});
@@ -58,6 +58,21 @@ describe("listMcpRoutes", () => {
 
 		expect(routes.override_me.info.description).toBe("shared version");
 		expect(routes.hideme.info.description).toBe("shared marked");
+		expect(routes.common_listed).toBeUndefined();
+		expect(routes.siteonly_local).toBeUndefined();
+
+	});
+
+	it("hides untagged, empty, and other-site common routes and shows listed and site-local ones", async () => {
+
+		const routes = await listMcpRoutes({ site: "site-a" });
+
+		expect(routes.common_untagged).toBeUndefined();
+		expect(routes.common_empty).toBeUndefined();
+		expect(routes.common_other).toBeUndefined();
+		expect(routes.common_listed.info.description).toBe("listed for site-a");
+		expect(routes.siteonly_local.specific).toBe(true);
+		expect(routes.siteonly_local.info.publishDocs).toBeUndefined();
 
 	});
 

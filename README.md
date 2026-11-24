@@ -78,6 +78,7 @@ export default {
 	description: 'Get a Bible passage',   // tool description
 	permissions: [ '*' ],                 // who may call it (unchanged)
 	mcp: true,                            // exposed over MCP; absent = not exposed
+	publishDocs: [ 'example.com' ],       // required on common routes; site-local routes skip this
 	properties: { type: 'object', properties: { ... } }, // tool inputSchema
 };
 ```
@@ -99,17 +100,21 @@ export default mcp({
 	path: '/mcp', // default
 	// optional: serve another site's tools on this host, e.g. an API subdomain
 	siteMap: { 'api.example.com': 'example.com' },
+	// optional: replace defaultRouteFilter({ route, site, awesomenessRequest, ctx })
+	// routeFilter: ({ route, site, awesomenessRequest, ctx }) => { return defaultRouteFilter({ route, site }) && extra; },
 });
 ```
 
 Tools come from the request's site (shared routes plus that site's `api/routes`). `siteMap` maps a request site to the site whose tools it serves; the request itself (`awesomenessRequest.site`, the application) is unchanged.
+
+A common (shared) route is included only when `_info.publishDocs` is an array that lists that site. Missing or empty `publishDocs` hides it. A site-local route is always shown. Pass `routeFilter` to `mcp()` to replace that default. The function receives `{ route, site, awesomenessRequest, ctx }` and returns true or false. `defaultRouteFilter` is exported so a custom filter can call it and extend it. The same filter applies to `tools/list` and `tools/call`.
 
 `mcp()` marks the request authenticated, so `validateRequest` skips `checkSession`, and the dev access bypass never applies to MCP requests.
 
 ## MCP internals
 
 - `mcpHandle` takes one JSON-RPC 2.0 message and returns one response, or `null` (HTTP 202) for a notification such as `notifications/initialized`.
-- `listMcpRoutes` keys tools by name (route path with `/` → `_`) and reads only `_info.js`; `mcpCallTool` imports `index.js` when the tool is called.
+- `listMcpRoutes` keys tools by name (route path with `/` → `_`) and reads only `_info.js`; it applies `routeFilter` or `defaultRouteFilter`. `mcpCallTool` imports `index.js` when the tool is called.
 - `infoToJsonSchema` accepts `_info.properties` as a `{ type: 'object', properties }` schema, a bare field map, or nothing.
 - Route failures from `mcpCallTool` come back as an `isError` result, never a stack. Unexpected errors are logged and answered as JSON-RPC `-32603 Internal error`; known JSON-RPC codes in `-32768..-32000` pass through.
 

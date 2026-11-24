@@ -1,8 +1,10 @@
-export default function mcpCallTool({ name, args, awesomenessRequest, site, }: {
+export default function mcpCallTool({ name, args, awesomenessRequest, site, ctx, routeFilter, }: {
     name: any;
     args: any;
     awesomenessRequest: any;
-    site?: string;
+    site?: any;
+    ctx: any;
+    routeFilter: any;
 }): Promise<{
     isError: boolean;
     structuredContent?: any;

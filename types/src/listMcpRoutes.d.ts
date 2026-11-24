@@ -1,3 +1,1 @@
-export default function listMcpRoutes({ site }: {
-    site: any;
-}): Promise<{}>;
+export default function listMcpRoutes({ site, awesomenessRequest, ctx, routeFilter, }?: {}): Promise<{}>;

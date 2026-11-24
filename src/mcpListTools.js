@@ -4,9 +4,16 @@ import infoToJsonSchema from './infoToJsonSchema.js';
 export default async function mcpListTools({
 	awesomenessRequest,
 	site = awesomenessRequest.site,
+	ctx,
+	routeFilter,
 }) {
 
-	const routes = await listMcpRoutes({ site });
+	const routes = await listMcpRoutes({
+		site,
+		awesomenessRequest,
+		ctx,
+		routeFilter,
+	});
 	const userPermissions = awesomenessRequest.user?.permissions || [];
 	const tools = [];
 

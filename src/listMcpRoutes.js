@@ -1,53 +1,20 @@
-import path from 'path';
-import { promises as fs } from 'fs';
-import { fileURLToPath } from 'url';
-import getConfig from './getConfig.js';
 import resolveApiRoute from './resolveApiRoute.js';
+import resolveRouteFilter from './resolveRouteFilter.js';
+import listMcpRoutePaths from './listMcpRoutePaths.js';
 
-export default async function listMcpRoutes({ site }) {
+export default async function listMcpRoutes({
+	site,
+	awesomenessRequest,
+	ctx,
+	routeFilter,
+} = {}) {
 
-	const {
-		siteDir__URL,
-		commonApiDir__URL,
-	} = getConfig();
-
-	const roots = [
-		path.join(fileURLToPath(commonApiDir__URL), 'routes'),
-		path.join(fileURLToPath(siteDir__URL), site, 'api', 'routes'),
-	];
-
-	const routePaths = {};
-
-	for(const root of roots){
-
-		const entries = await fs.readdir(root, { recursive: true }).catch(() => {
-
-			return [];
-
-		});
-
-		for(const entry of entries){
-
-			const rel = entry.split(path.sep).join('/');
-
-			if(!rel.endsWith('/_info.js')){
-
-				continue;
-
-			}
-
-			const route = rel.slice(0, -'/_info.js'.length);
-
-			if(/^[a-zA-Z0-9/_-]+$/.test(route)){
-
-				routePaths[route] = true;
-
-			}
-
-		}
-
-	}
-
+	const filter = resolveRouteFilter({
+		routeFilter,
+		awesomenessRequest,
+	});
+	const requestCtx = ctx || awesomenessRequest?.ctx;
+	const routePaths = await listMcpRoutePaths({ site });
 	const tools = {};
 
 	for(const route of Object.keys(routePaths)){
@@ -65,14 +32,24 @@ export default async function listMcpRoutes({ site }) {
 		if(resolved?.indexPath && resolved.info?.mcp === true){
 
 			const name = route.split('/').join('_');
-
-			tools[name] = {
+			const entry = {
 				name,
 				route,
 				info: resolved.info,
 				indexPath: resolved.indexPath,
 				specific: resolved.specific,
 			};
+
+			if(await filter({
+				route: entry,
+				site,
+				awesomenessRequest,
+				ctx: requestCtx,
+			})){
+
+				tools[name] = entry;
+
+			}
 
 		}
 

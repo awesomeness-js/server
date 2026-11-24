@@ -1,10 +1,12 @@
 import mcpHandle from './mcpHandle.js';
+import defaultRouteFilter from './defaultRouteFilter.js';
 
 export default function mcp({
 	authenticate,
 	path = '/mcp',
 	serverInfo = null,
 	siteMap = {},
+	routeFilter = undefined,
 } = {}) {
 
 	if(typeof authenticate !== 'function'){
@@ -68,6 +70,8 @@ export default function mcp({
 		awesomenessRequest.user = auth.user;
 		awesomenessRequest.authenticated = true;
 		awesomenessRequest.mcp = true;
+		awesomenessRequest.ctx = ctx;
+		awesomenessRequest.routeFilter = typeof routeFilter === 'function' ? routeFilter : defaultRouteFilter;
 
 		const response = await mcpHandle({
 			message: ctx.request.body,
