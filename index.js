@@ -10,11 +10,15 @@ import _checkAccess from './src/checkAccess.js';
 import _componentAndPageMemory from './src/componentAndPageMemory.js';
 import _componentDependencies from './src/componentDependencies.js';
 import _config from './src/config.js';
+import _defaultRouteFilter from './src/defaultRouteFilter.js';
 import _extractUiComponentRefs from './src/extractUiComponentRefs.js';
 import _fetchPage from './src/fetchPage.js';
 import _getConfig from './src/getConfig.js';
 import _getMD from './src/getMD.js';
+import _infoToJsonSchema from './src/infoToJsonSchema.js';
 import _init from './src/init.js';
+import _jsonRpcError from './src/jsonRpcError.js';
+import _jsonRpcResult from './src/jsonRpcResult.js';
 import _koa_attachAwesomenessRequest from './src/koa/attachAwesomenessRequest.js';
 import _koa_cors from './src/koa/cors.js';
 import _koa_errorHandler from './src/koa/errorHandler.js';
@@ -24,11 +28,22 @@ import _koa_routeRequest from './src/koa/routeRequest.js';
 import _koa_serverUp from './src/koa/serverUp.js';
 import _koa_staticFiles from './src/koa/staticFiles.js';
 import _koa_timeout from './src/koa/timeout.js';
+import _listMcpRoutePaths from './src/listMcpRoutePaths.js';
+import _listMcpRoutes from './src/listMcpRoutes.js';
+import _mcp from './src/mcp.js';
+import _mcpCallTool from './src/mcpCallTool.js';
+import _mcpHandle from './src/mcpHandle.js';
+import _mcpInitialize from './src/mcpInitialize.js';
+import _mcpInternalError from './src/mcpInternalError.js';
+import _mcpListTools from './src/mcpListTools.js';
 import _pageInfo from './src/pageInfo.js';
 import _reRoute from './src/reRoute.js';
+import _resolveApiRoute from './src/resolveApiRoute.js';
 import _resolveRealCasePath from './src/resolveRealCasePath.js';
+import _resolveRouteFilter from './src/resolveRouteFilter.js';
 import _specialPaths from './src/specialPaths.js';
 import _start from './src/start.js';
+import _toJsonSchemaNode from './src/toJsonSchemaNode.js';
 import _validateRequest from './src/validateRequest.js';
 import _ws_handlers from './src/ws/handlers.js';
 import _ws_index from './src/ws/index.js';
@@ -40,16 +55,31 @@ export { _checkAccess as checkAccess };
 export { _componentAndPageMemory as componentAndPageMemory };
 export { _componentDependencies as componentDependencies };
 export { _config as config };
+export { _defaultRouteFilter as defaultRouteFilter };
 export { _extractUiComponentRefs as extractUiComponentRefs };
 export { _fetchPage as fetchPage };
 export { _getConfig as getConfig };
 export { _getMD as getMD };
+export { _infoToJsonSchema as infoToJsonSchema };
 export { _init as init };
+export { _jsonRpcError as jsonRpcError };
+export { _jsonRpcResult as jsonRpcResult };
+export { _listMcpRoutePaths as listMcpRoutePaths };
+export { _listMcpRoutes as listMcpRoutes };
+export { _mcp as mcp };
+export { _mcpCallTool as mcpCallTool };
+export { _mcpHandle as mcpHandle };
+export { _mcpInitialize as mcpInitialize };
+export { _mcpInternalError as mcpInternalError };
+export { _mcpListTools as mcpListTools };
 export { _pageInfo as pageInfo };
 export { _reRoute as reRoute };
+export { _resolveApiRoute as resolveApiRoute };
 export { _resolveRealCasePath as resolveRealCasePath };
+export { _resolveRouteFilter as resolveRouteFilter };
 export { _specialPaths as specialPaths };
 export { _start as start };
+export { _toJsonSchemaNode as toJsonSchemaNode };
 export { _validateRequest as validateRequest };
 
 export const koa = {
@@ -78,16 +108,38 @@ export default {
 	componentAndPageMemory: _componentAndPageMemory,
 	componentDependencies: _componentDependencies,
 	config: _config,
+	/**
+	 * @param {{
+	 *   route?: { specific?: boolean, info?: { publishDocs?: unknown } },
+	 *   site?: string
+	 * }} options
+	 * @returns {boolean}
+	 */
+	defaultRouteFilter: _defaultRouteFilter,
 	extractUiComponentRefs: _extractUiComponentRefs,
 	fetchPage: _fetchPage,
 	getConfig: _getConfig,
 	getMD: _getMD,
+	infoToJsonSchema: _infoToJsonSchema,
 	init: _init,
+	jsonRpcError: _jsonRpcError,
+	jsonRpcResult: _jsonRpcResult,
+	listMcpRoutePaths: _listMcpRoutePaths,
+	listMcpRoutes: _listMcpRoutes,
+	mcp: _mcp,
+	mcpCallTool: _mcpCallTool,
+	mcpHandle: _mcpHandle,
+	mcpInitialize: _mcpInitialize,
+	mcpInternalError: _mcpInternalError,
+	mcpListTools: _mcpListTools,
 	pageInfo: _pageInfo,
 	reRoute: _reRoute,
+	resolveApiRoute: _resolveApiRoute,
 	resolveRealCasePath: _resolveRealCasePath,
+	resolveRouteFilter: _resolveRouteFilter,
 	specialPaths: _specialPaths,
 	start: _start,
+	toJsonSchemaNode: _toJsonSchemaNode,
 	validateRequest: _validateRequest,
 	koa: {
 		attachAwesomenessRequest: _koa_attachAwesomenessRequest,

@@ -10,11 +10,15 @@ import type _checkAccess from './checkAccess';
 import type _componentAndPageMemory from './componentAndPageMemory';
 import type _componentDependencies from './componentDependencies';
 import type _config from './config';
+import type _defaultRouteFilter from './defaultRouteFilter';
 import type _extractUiComponentRefs from './extractUiComponentRefs';
 import type _fetchPage from './fetchPage';
 import type _getConfig from './getConfig';
 import type _getMD from './getMD';
+import type _infoToJsonSchema from './infoToJsonSchema';
 import type _init from './init';
+import type _jsonRpcError from './jsonRpcError';
+import type _jsonRpcResult from './jsonRpcResult';
 import type _koa_attachAwesomenessRequest from './koa/attachAwesomenessRequest';
 import type _koa_cors from './koa/cors';
 import type _koa_errorHandler from './koa/errorHandler';
@@ -24,11 +28,22 @@ import type _koa_routeRequest from './koa/routeRequest';
 import type _koa_serverUp from './koa/serverUp';
 import type _koa_staticFiles from './koa/staticFiles';
 import type _koa_timeout from './koa/timeout';
+import type _listMcpRoutePaths from './listMcpRoutePaths';
+import type _listMcpRoutes from './listMcpRoutes';
+import type _mcp from './mcp';
+import type _mcpCallTool from './mcpCallTool';
+import type _mcpHandle from './mcpHandle';
+import type _mcpInitialize from './mcpInitialize';
+import type _mcpInternalError from './mcpInternalError';
+import type _mcpListTools from './mcpListTools';
 import type _pageInfo from './pageInfo';
 import type _reRoute from './reRoute';
+import type _resolveApiRoute from './resolveApiRoute';
 import type _resolveRealCasePath from './resolveRealCasePath';
+import type _resolveRouteFilter from './resolveRouteFilter';
 import type _specialPaths from './specialPaths';
 import type _start from './start';
+import type _toJsonSchemaNode from './toJsonSchemaNode';
 import type _validateRequest from './validateRequest';
 import type _ws_handlers from './ws/handlers';
 import type _ws_index from './ws/index';
@@ -40,16 +55,31 @@ export declare const checkAccess: typeof _checkAccess;
 export declare const componentAndPageMemory: typeof _componentAndPageMemory;
 export declare const componentDependencies: typeof _componentDependencies;
 export declare const config: typeof _config;
+export declare const defaultRouteFilter: typeof _defaultRouteFilter;
 export declare const extractUiComponentRefs: typeof _extractUiComponentRefs;
 export declare const fetchPage: typeof _fetchPage;
 export declare const getConfig: typeof _getConfig;
 export declare const getMD: typeof _getMD;
+export declare const infoToJsonSchema: typeof _infoToJsonSchema;
 export declare const init: typeof _init;
+export declare const jsonRpcError: typeof _jsonRpcError;
+export declare const jsonRpcResult: typeof _jsonRpcResult;
+export declare const listMcpRoutePaths: typeof _listMcpRoutePaths;
+export declare const listMcpRoutes: typeof _listMcpRoutes;
+export declare const mcp: typeof _mcp;
+export declare const mcpCallTool: typeof _mcpCallTool;
+export declare const mcpHandle: typeof _mcpHandle;
+export declare const mcpInitialize: typeof _mcpInitialize;
+export declare const mcpInternalError: typeof _mcpInternalError;
+export declare const mcpListTools: typeof _mcpListTools;
 export declare const pageInfo: typeof _pageInfo;
 export declare const reRoute: typeof _reRoute;
+export declare const resolveApiRoute: typeof _resolveApiRoute;
 export declare const resolveRealCasePath: typeof _resolveRealCasePath;
+export declare const resolveRouteFilter: typeof _resolveRouteFilter;
 export declare const specialPaths: typeof _specialPaths;
 export declare const start: typeof _start;
+export declare const toJsonSchemaNode: typeof _toJsonSchemaNode;
 export declare const validateRequest: typeof _validateRequest;
 
 export declare const koa: {
@@ -78,16 +108,38 @@ declare const _default: {
 	componentAndPageMemory: typeof _componentAndPageMemory;
 	componentDependencies: typeof _componentDependencies;
 	config: typeof _config;
+	/**
+	 * @param {{
+	 *   route?: { specific?: boolean, info?: { publishDocs?: unknown } },
+	 *   site?: string
+	 * }} options
+	 * @returns {boolean}
+	 */
+	defaultRouteFilter: typeof _defaultRouteFilter;
 	extractUiComponentRefs: typeof _extractUiComponentRefs;
 	fetchPage: typeof _fetchPage;
 	getConfig: typeof _getConfig;
 	getMD: typeof _getMD;
+	infoToJsonSchema: typeof _infoToJsonSchema;
 	init: typeof _init;
+	jsonRpcError: typeof _jsonRpcError;
+	jsonRpcResult: typeof _jsonRpcResult;
+	listMcpRoutePaths: typeof _listMcpRoutePaths;
+	listMcpRoutes: typeof _listMcpRoutes;
+	mcp: typeof _mcp;
+	mcpCallTool: typeof _mcpCallTool;
+	mcpHandle: typeof _mcpHandle;
+	mcpInitialize: typeof _mcpInitialize;
+	mcpInternalError: typeof _mcpInternalError;
+	mcpListTools: typeof _mcpListTools;
 	pageInfo: typeof _pageInfo;
 	reRoute: typeof _reRoute;
+	resolveApiRoute: typeof _resolveApiRoute;
 	resolveRealCasePath: typeof _resolveRealCasePath;
+	resolveRouteFilter: typeof _resolveRouteFilter;
 	specialPaths: typeof _specialPaths;
 	start: typeof _start;
+	toJsonSchemaNode: typeof _toJsonSchemaNode;
 	validateRequest: typeof _validateRequest;
 	koa: {
 		attachAwesomenessRequest: typeof _koa_attachAwesomenessRequest,

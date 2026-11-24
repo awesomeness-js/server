@@ -1,17 +1,11 @@
-import path from "path";
-import { promises as fs } from "fs";
-import { fileURLToPath, pathToFileURL } from "url";
-
 import fetchPage from "../fetchPage.js";
 import pageInfo from "../pageInfo.js";
 import validateRequest from "../validateRequest.js";
 import staticFiles from "./staticFiles.js";
 import finalFormat from "./finalFormat.js";
-import getConfig from "../getConfig.js";
+import resolveApiRoute from "../resolveApiRoute.js";
 
 export default async function routeRequest(ctx, next) {
-
-	const awesomenessConfig = getConfig();
 
 	const awesomenessRequest = ctx.awesomenessRequest;
 
@@ -127,167 +121,47 @@ export default async function routeRequest(ctx, next) {
 
 		awesomenessRequest.log('yeah we are live (API)');
 
-		const {
-			siteDir__URL, 
-			commonApiDir__URL
-		} = awesomenessConfig;
+		let resolved;
 
-		// siteDir__URL should point at the /sites/ directory (as a file: URL)
-		if (!(siteDir__URL instanceof URL) || !(commonApiDir__URL instanceof URL)) {
+		try {
 
-			ctx.throw(
-				500,
-				new Error("Config must provide siteDir__URL and commonApiDir__URL as file: URLs")
-			);
-			
+			resolved = await resolveApiRoute({
+				site: awesomenessRequest.site,
+				route: awesomenessRequest.pageRoute,
+			});
+
+		} catch (importError) {
+
+			ctx.status = 500;
+			ctx.body = {
+				success: false,
+				message: importError?.message,
+				...importError,
+			};
+			finalFormat(awesomenessRequest, ctx);
+
 			return;
-		
+
 		}
 
-		const sitesRoot = fileURLToPath(siteDir__URL);
-		const commonApiRoot = fileURLToPath(commonApiDir__URL);
+		if (!resolved.index) {
 
-		const siteApiRoutesRoot = path.join(sitesRoot, awesomenessRequest.site, "api", "routes");
-		const commonApiRoutesRoot = path.join(commonApiRoot, "routes");
+			ctx.status = 404;
+			ctx.body = {
+				success: false,
+				message: "route not found",
+				siteSpecificRoute: resolved.siteSpecificRoute,
+				genericRoute: resolved.genericRoute,
+			};
+			finalFormat(awesomenessRequest, ctx);
 
-		const routeRel = path.join(awesomenessRequest.pageRoute, "index.js");
-		const infoRel = path.join(awesomenessRequest.pageRoute, "_info.js");
+			return;
 
-		const siteSpecificIndexPath = path.join(siteApiRoutesRoot, routeRel);
-		const siteSpecificInfoPath = path.join(siteApiRoutesRoot, infoRel);
-
-		const genericIndexPath = path.join(commonApiRoutesRoot, routeRel);
-		const genericInfoPath = path.join(commonApiRoutesRoot, infoRel);
-
-		let routeIndex;
-		let routeInfo;
-
-		let specific = false;
-
-		// Prefer filesystem existence checks so we don't rely on import() throwing for control flow
-		awesomenessRequest.log('Trying site specific route.', {
-			siteSpecificIndexPath,
-			siteSpecificInfoPath 
-		});
-
-		let siteSpecificIndexExists = false;
-		let siteSpecificInfoExists = false;
-
-
-		try {
-
-			await fs.access(siteSpecificIndexPath);
-			siteSpecificIndexExists = true;
-		
-		} catch {}
-
-		try {
-
-			await fs.access(siteSpecificInfoPath);
-			siteSpecificInfoExists = true;
-		
-		} catch {}
-
-		if (siteSpecificIndexExists && siteSpecificInfoExists) {
-
-			awesomenessRequest.log('Site specific route found.', {
-				siteSpecificIndexPath,
-				siteSpecificInfoPath 
-			});
-
-			try {
-
-				routeIndex = await import(pathToFileURL(siteSpecificIndexPath).href);
-				const infoMod = await import(pathToFileURL(siteSpecificInfoPath).href);
-
-				routeInfo = infoMod.default;
-				awesomenessRequest.log('Site specific route info loaded.', {
-					routeInfo 
-				});
-				specific = true;
-			
-			} catch (importError) {
-
-				ctx.status = 500;
-				ctx.body = {
-					success: false,
-					message: "Site specific route import error",
-					error: importError,
-					siteSpecificRoute: siteSpecificIndexPath,
-					siteSpecificInfo: siteSpecificInfoPath,
-				};
-				finalFormat(awesomenessRequest, ctx);
-				
-				return;
-			
-			}
-		
-		} else {
-
-			awesomenessRequest.log('Site specific route not found, trying generic route.', {
-				siteSpecificIndexExists: siteSpecificIndexExists,
-				siteSpecificInfoExists: siteSpecificInfoExists 
-			});
-			let genericIndexExists = false;
-			let genericInfoExists = false;
-
-
-			try {
-
-				await fs.access(genericIndexPath);
-				genericIndexExists = true;
-			
-			} catch {}
-
-			try {
-
-				await fs.access(genericInfoPath);
-				genericInfoExists = true;
-			
-			} catch {}
-
-			if (genericIndexExists && genericInfoExists) {
-
-				try {
-
-					routeIndex = await import(pathToFileURL(genericIndexPath).href);
-					const infoMod = await import(pathToFileURL(genericInfoPath).href);
-
-					routeInfo = infoMod.default;
-					specific = false;
-				
-				} catch (importError2) {
-
-					ctx.status = 500;
-					ctx.body = {
-						success: false,
-						message: "Generic route import error",
-						error: importError2,
-						genericRoute: genericIndexPath,
-						genericInfo: genericInfoPath,
-					};
-					finalFormat(awesomenessRequest, ctx);
-					
-					return;
-				
-				}
-			
-			} else {
-
-				ctx.status = 404;
-				ctx.body = {
-					success: false,
-					message: "route not found",
-					siteSpecificRoute: siteSpecificIndexPath,
-					genericRoute: genericIndexPath,
-				};
-				finalFormat(awesomenessRequest, ctx);
-				
-				return;
-			
-			}
-		
 		}
+
+		const routeIndex = resolved.index;
+		const routeInfo = resolved.info;
+		const specific = resolved.specific;
 
 		try {
 
