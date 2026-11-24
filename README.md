@@ -80,10 +80,12 @@ export default {
 	mcp: true,                            // exposed over MCP; absent = not exposed
 	publishDocs: [ 'example.com' ],       // required on common routes; site-local routes skip this
 	properties: { type: 'object', properties: { ... } }, // tool inputSchema
+	returns: { type: 'object', properties: { ... } },    // tool outputSchema; omit or leave as a stub to hide it
 };
 ```
 
 - Tool name = route path with `/` -> `_` (`bible/passage` -> `bible_passage`).
+- `outputSchema` comes from `_info.returns` when it is a real object schema. Missing, empty, or stub `returns` (`{ key: 'value' }`) omit `outputSchema`. Successful `tools/call` already includes `structuredContent` for object results.
 - Shared `api/routes` and `sites/<site>/api/routes` are both scanned; a site route overrides the shared route on the same path (and hides it if the site version is not marked).
 - Calls run through the same `validateRequest` (permissions + `clean.object`) and route `index.js` as `awesomenessType: 'api'` requests. `tools/list` only shows tools the caller's `user.permissions` allow.
 - Transport: stateless Streamable HTTP, JSON responses (no SSE). Methods: `initialize`, `ping`, `tools/list`, `tools/call`; notifications get `202`.
@@ -115,7 +117,7 @@ A common (shared) route is included only when `_info.publishDocs` is an array th
 
 - `mcpHandle` takes one JSON-RPC 2.0 message and returns one response, or `null` (HTTP 202) for a notification such as `notifications/initialized`.
 - `listMcpRoutes` keys tools by name (route path with `/` → `_`) and reads only `_info.js`; it applies `routeFilter` or `defaultRouteFilter`. `mcpCallTool` imports `index.js` when the tool is called.
-- `infoToJsonSchema` accepts `_info.properties` as a `{ type: 'object', properties }` schema, a bare field map, or nothing.
+- `infoToJsonSchema` accepts `_info.properties` as a `{ type: 'object', properties }` schema, a bare field map, or nothing. `returnsToOutputSchema` uses the same conversion for `_info.returns` and returns null when `returns` is missing, empty, or a template stub, so `tools/list` only includes `outputSchema` for a real object schema.
 - Route failures from `mcpCallTool` come back as an `isError` result, never a stack. Unexpected errors are logged and answered as JSON-RPC `-32603 Internal error`; known JSON-RPC codes in `-32768..-32000` pass through.
 
 ## License

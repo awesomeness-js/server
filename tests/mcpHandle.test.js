@@ -119,6 +119,36 @@ describe("mcpHandle", () => {
 			},
 			required: [ "text" ]
 		});
+		expect(echo.outputSchema).toEqual({
+			type: "object",
+			properties: {
+				echoed: {
+					type: "string",
+					description: "the echoed text"
+				}
+			},
+			required: [ "echoed" ]
+		});
+
+		const boom = res.result.tools.find((tool) => {
+
+			return tool.name === "boom";
+
+		});
+		const listed = res.result.tools.find((tool) => {
+
+			return tool.name === "common_listed";
+
+		});
+		const thing = res.result.tools.find((tool) => {
+
+			return tool.name === "user_thing";
+
+		});
+
+		expect(boom.outputSchema).toBeUndefined();
+		expect(listed.outputSchema).toBeUndefined();
+		expect(thing.outputSchema).toBeUndefined();
 
 	});
 

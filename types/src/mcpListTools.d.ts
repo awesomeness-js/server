@@ -16,4 +16,14 @@ export default function mcpListTools({ awesomenessRequest, site, ctx, routeFilte
         required: string[];
         items: /*elided*/ any;
     };
+    outputSchema?: {
+        type: any;
+        format: any;
+        contentEncoding: string;
+        enum: any;
+        examples: any;
+        properties: {};
+        required: string[];
+        items: /*elided*/ any;
+    };
 }[]>;
