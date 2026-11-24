@@ -1,5 +1,6 @@
 import listMcpRoutes from './listMcpRoutes.js';
 import infoToJsonSchema from './infoToJsonSchema.js';
+import returnsToOutputSchema from './returnsToOutputSchema.js';
 
 export default async function mcpListTools({
 	awesomenessRequest,
@@ -28,11 +29,20 @@ export default async function mcpListTools({
 
 		if(canCall){
 
-			tools.push({
+			const tool = {
 				name: route.name,
 				description: route.info.description || route.route,
 				inputSchema: infoToJsonSchema(route.info.properties),
-			});
+			};
+			const outputSchema = returnsToOutputSchema(route.info.returns);
+
+			if(outputSchema){
+
+				tool.outputSchema = outputSchema;
+
+			}
+
+			tools.push(tool);
 
 		}
 

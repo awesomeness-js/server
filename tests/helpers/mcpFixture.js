@@ -36,7 +36,14 @@ export default async function mcpFixture() {
 		permissions: [ "*" ],
 		mcp: true,
 		properties: text,
-		publishDocs: publishedSites
+		publishDocs: publishedSites,
+		returns: {
+			echoed: {
+				type: "string",
+				required: true,
+				description: "the echoed text"
+			}
+		}
 	});
 	await route(shared, "shared/hidden", {
 		description: "Not exposed",
@@ -87,7 +94,8 @@ export default async function mcpFixture() {
 		permissions: [ "*" ],
 		mcp: true,
 		properties: {},
-		publishDocs: publishedSites
+		publishDocs: publishedSites,
+		returns: { key: "value" }
 	}, "async () => { throw new Error('kaboom'); }");
 	await route(shared, "common/untagged", {
 		description: "untagged common",
@@ -114,7 +122,8 @@ export default async function mcpFixture() {
 		permissions: [ "*" ],
 		mcp: true,
 		publishDocs: [ "site-a" ],
-		properties: {}
+		properties: {},
+		returns: {}
 	});
 	await route(site, "siteonly/local", {
 		description: "site-local untagged",

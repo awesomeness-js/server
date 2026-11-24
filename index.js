@@ -17,6 +17,7 @@ import _getConfig from './src/getConfig.js';
 import _getMD from './src/getMD.js';
 import _infoToJsonSchema from './src/infoToJsonSchema.js';
 import _init from './src/init.js';
+import _isStubReturns from './src/isStubReturns.js';
 import _jsonRpcError from './src/jsonRpcError.js';
 import _jsonRpcResult from './src/jsonRpcResult.js';
 import _koa_attachAwesomenessRequest from './src/koa/attachAwesomenessRequest.js';
@@ -41,6 +42,7 @@ import _reRoute from './src/reRoute.js';
 import _resolveApiRoute from './src/resolveApiRoute.js';
 import _resolveRealCasePath from './src/resolveRealCasePath.js';
 import _resolveRouteFilter from './src/resolveRouteFilter.js';
+import _returnsToOutputSchema from './src/returnsToOutputSchema.js';
 import _specialPaths from './src/specialPaths.js';
 import _start from './src/start.js';
 import _toJsonSchemaNode from './src/toJsonSchemaNode.js';
@@ -62,6 +64,7 @@ export { _getConfig as getConfig };
 export { _getMD as getMD };
 export { _infoToJsonSchema as infoToJsonSchema };
 export { _init as init };
+export { _isStubReturns as isStubReturns };
 export { _jsonRpcError as jsonRpcError };
 export { _jsonRpcResult as jsonRpcResult };
 export { _listMcpRoutePaths as listMcpRoutePaths };
@@ -77,6 +80,7 @@ export { _reRoute as reRoute };
 export { _resolveApiRoute as resolveApiRoute };
 export { _resolveRealCasePath as resolveRealCasePath };
 export { _resolveRouteFilter as resolveRouteFilter };
+export { _returnsToOutputSchema as returnsToOutputSchema };
 export { _specialPaths as specialPaths };
 export { _start as start };
 export { _toJsonSchemaNode as toJsonSchemaNode };
@@ -122,6 +126,7 @@ export default {
 	getMD: _getMD,
 	infoToJsonSchema: _infoToJsonSchema,
 	init: _init,
+	isStubReturns: _isStubReturns,
 	jsonRpcError: _jsonRpcError,
 	jsonRpcResult: _jsonRpcResult,
 	listMcpRoutePaths: _listMcpRoutePaths,
@@ -137,6 +142,7 @@ export default {
 	resolveApiRoute: _resolveApiRoute,
 	resolveRealCasePath: _resolveRealCasePath,
 	resolveRouteFilter: _resolveRouteFilter,
+	returnsToOutputSchema: _returnsToOutputSchema,
 	specialPaths: _specialPaths,
 	start: _start,
 	toJsonSchemaNode: _toJsonSchemaNode,

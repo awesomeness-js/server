@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+### Added
+
+- **MCP `outputSchema` from `_info.returns`.** `tools/list` includes `outputSchema` (via the same `infoToJsonSchema` conversion as `inputSchema`) when a route's `returns` is a real object schema. Missing, empty, or template-stub `returns` (`{ key: 'value' }`) omit `outputSchema`, so clients are not given a wrong schema to validate. `mcpCallTool` already returns `structuredContent` for object results, which MCP 2025-06-18 and 2025-11-25 require when `outputSchema` is present. New exports: `isStubReturns`, `returnsToOutputSchema`.
+
 ## 1.2.0
 
 ### Added
