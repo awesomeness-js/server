@@ -31,4 +31,14 @@ describe("isStubReturns", () => {
 
 	});
 
+
+	it("treats a field that only uses oneOf, anyOf, or additionalProperties as real", () => {
+
+		expect(isStubReturns({ sharedWith: { oneOf: [ { type: "boolean" } ] } })).toBe(false);
+		expect(isStubReturns({ sharedWith: { anyOf: [ { type: "boolean" } ] } })).toBe(false);
+		expect(isStubReturns({ prayers: { additionalProperties: { type: "object" } } })).toBe(false);
+		expect(isStubReturns({ oneOf: [ { type: "object" } ] })).toBe(false);
+
+	});
+
 });

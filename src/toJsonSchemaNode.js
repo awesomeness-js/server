@@ -6,21 +6,45 @@ export default function toJsonSchemaNode(node = {}) {
 	};
 	const plainTypes = [ 'string', 'number', 'integer', 'boolean', 'object', 'array' ];
 	const copyKeys = [ 'description', 'default', 'minLength', 'maxLength', 'minimum', 'maximum', 'minItems', 'maxItems', 'pattern' ];
+	const types = Array.isArray(node.type) ? node.type : [ node.type ];
+	const baseTypes = types.filter((type) => type !== undefined && type !== 'null');
+	const baseType = baseTypes[0];
+	const nullable = node.nullable === true || types.includes('null');
 	const out = {};
 
-	if(formats[node.type]){
+	if(baseTypes.length > 1){
+
+		const mapped = [ ...new Set(baseTypes.map((type) => {
+
+			if(formats[type] || type === 'buffer'){
+
+				return 'string';
+
+			}
+
+			return plainTypes.includes(type) ? type : null;
+
+		}).filter(Boolean)) ];
+
+		if(mapped.length){
+
+			out.type = mapped.length === 1 ? mapped[0] : mapped;
+
+		}
+
+	} else if(formats[baseType]){
 
 		out.type = 'string';
-		out.format = formats[node.type];
+		out.format = formats[baseType];
 
-	} else if(node.type === 'buffer'){
+	} else if(baseType === 'buffer'){
 
 		out.type = 'string';
 		out.contentEncoding = 'base64';
 
-	} else if(plainTypes.includes(node.type)){
+	} else if(plainTypes.includes(baseType)){
 
-		out.type = node.type;
+		out.type = baseType;
 
 	}
 
@@ -83,9 +107,50 @@ export default function toJsonSchemaNode(node = {}) {
 
 	}
 
+	if(typeof node.additionalProperties === 'boolean'){
+
+		out.additionalProperties = node.additionalProperties;
+
+	} else if(node.additionalProperties && typeof node.additionalProperties === 'object'){
+
+		out.type = out.type ?? 'object';
+		out.additionalProperties = toJsonSchemaNode(node.additionalProperties);
+
+	}
+
 	if(node.items && typeof node.items === 'object'){
 
 		out.items = toJsonSchemaNode(node.items);
+
+	}
+
+	for(const key of [ 'oneOf', 'anyOf' ]){
+
+		if(Array.isArray(node[key])){
+
+			out[key] = node[key].map((child) => toJsonSchemaNode(child || {}));
+
+		}
+
+	}
+
+	if(nullable){
+
+		if(out.type !== undefined){
+
+			out.type = [ ...[].concat(out.type), 'null' ];
+
+		} else if(baseType === undefined && types.includes('null')){
+
+			out.type = 'null';
+
+		}
+
+		if(out.enum && !out.enum.includes(null)){
+
+			out.enum = [ ...out.enum, null ];
+
+		}
 
 	}
 

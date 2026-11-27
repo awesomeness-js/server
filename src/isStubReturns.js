@@ -1,3 +1,5 @@
+const schemaKeys = [ 'type', 'properties', 'items', 'description', 'oneOf', 'anyOf', 'additionalProperties' ];
+
 export default function isStubReturns(returns) {
 
 	if(!returns || typeof returns !== 'object' || Array.isArray(returns)){
@@ -6,10 +8,7 @@ export default function isStubReturns(returns) {
 
 	}
 
-	if(returns.type !== undefined
-		|| returns.properties !== undefined
-		|| returns.items !== undefined
-		|| returns.description !== undefined){
+	if(schemaKeys.some((key) => returns[key] !== undefined)){
 
 		return false;
 
@@ -31,10 +30,7 @@ export default function isStubReturns(returns) {
 
 		}
 
-		return value.type !== undefined
-			|| value.properties !== undefined
-			|| value.items !== undefined
-			|| value.description !== undefined;
+		return schemaKeys.some((key) => value[key] !== undefined);
 
 	});
 

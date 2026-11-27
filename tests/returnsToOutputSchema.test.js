@@ -52,4 +52,53 @@ describe("returnsToOutputSchema", () => {
 
 	});
 
+
+	it("keeps maps, nullable fields, and unions in an output schema", () => {
+
+		expect(returnsToOutputSchema({
+			bookData: {
+				type: "object",
+				description: "keyed by book code",
+				additionalProperties: {
+					type: "object",
+					properties: {
+						title: { type: "string" }
+					}
+				}
+			},
+			first: {
+				type: "string",
+				nullable: true
+			},
+			sharedWith: {
+				oneOf: [
+					{ type: "object" },
+					{ type: "boolean" }
+				]
+			}
+		})).toEqual({
+			type: "object",
+			properties: {
+				bookData: {
+					type: "object",
+					description: "keyed by book code",
+					additionalProperties: {
+						type: "object",
+						properties: {
+							title: { type: "string" }
+						}
+					}
+				},
+				first: { type: [ "string", "null" ] },
+				sharedWith: {
+					oneOf: [
+						{ type: "object" },
+						{ type: "boolean" }
+					]
+				}
+			}
+		});
+
+	});
+
 });
