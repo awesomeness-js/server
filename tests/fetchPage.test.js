@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import fs from "fs";
+import os from "os";
 import path from "path";
 import { performance } from "perf_hooks";
 import { clearComponentAndPageMemory } from "../src/componentAndPageMemory.js";
@@ -294,6 +296,55 @@ describe("fetchPage component inference", () => {
 		// The test here is mainly to ensure no error is thrown and the call completes
 		// For deeper validation, you could spy on the namespace init logic if exposed
 
+	});
+
+
+	it("assigns page js to the shared namespace names, with brackets for dashed folders", async () => {
+
+		const pageRoot = fs.mkdtempSync(path.join(os.tmpdir(), "awes-page-ns-"));
+		const dashJsPath = path.join(pageRoot, "sites", "site-a", "pages", "mortgage-calculator", "js");
+
+		fs.mkdirSync(path.join(dashJsPath, "state"), { recursive: true });
+		fs.writeFileSync(path.join(dashJsPath, "init.js"), "import ui from '#ui';\nexport default function init() { return PAGE.state.create(); }\n");
+		fs.writeFileSync(path.join(dashJsPath, "state", "create.js"), "import PAGE from '../PAGE.js';\nexport default async function create() { return 1; }\n");
+
+		mocks.getConfig.mockReturnValue({
+			siteDir__URL: path.join(pageRoot, "sites"),
+			componentLocations: () => [ new URL("file:///tmp/components/") ],
+		});
+
+		mocks.pageInfo.mockResolvedValueOnce({
+			about: {
+				version: "1.0.0",
+				permissions: [],
+			},
+			cssPath: path.join(pageRoot, "sites", "site-a", "pages", "mortgage-calculator", "css"),
+			jsPath: dashJsPath,
+			getData: async () => ({ ok: true }),
+		});
+
+		const awesomenessRequest = buildRequest();
+
+		awesomenessRequest.pageRoute = "mortgage-calculator";
+		awesomenessRequest.updatedMeta = {};
+
+		await fetchPage(awesomenessRequest, {});
+
+		const js = awesomenessRequest.updatedMeta.pages["mortgage-calculator"].js;
+
+		fs.rmSync(pageRoot, {
+			recursive: true,
+			force: true 
+		});
+
+		expect(js).toContain("app.pages = app.pages || {};");
+		expect(js).toContain("app.pages[\"mortgage-calculator\"] = app.pages[\"mortgage-calculator\"] || {};");
+		expect(js).toContain("app.pages[\"mortgage-calculator\"].init = function init()");
+		expect(js).toContain("app.pages[\"mortgage-calculator\"].state = app.pages[\"mortgage-calculator\"].state || {};");
+		expect(js).toContain("app.pages[\"mortgage-calculator\"].state.create = async function create()");
+		expect(js).toContain("return app.pages[\"mortgage-calculator\"].state.create();");
+		expect(js).not.toContain("import ");
+	
 	});
 
 });
