@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.3
+
+### Fixed
+
+- **Schema transform keeps `additionalProperties`, `oneOf`, `anyOf`, and nullable types.** `toJsonSchemaNode` (used by `infoToJsonSchema`, MCP `inputSchema`/`outputSchema`, and any OpenAPI built on it) used to drop these. Now: `additionalProperties` (boolean or a field schema, converted recursively) makes a map type; `oneOf` / `anyOf` members are converted recursively; `nullable: true` or a `type` array such as `[ 'string', 'null' ]` becomes a JSON Schema type array ending in `'null'` (and `null` is added to `enum` when one is present). `uuid`, `timestamp`, and `buffer` still map to `string` with their format inside a type array.
+- `isStubReturns` counts `oneOf`, `anyOf`, and `additionalProperties` as schema keys, so a returns field that only uses them is not mistaken for a template stub.
+
 ## 1.2.1
 
 ### Added
