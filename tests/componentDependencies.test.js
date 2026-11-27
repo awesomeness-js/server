@@ -82,4 +82,38 @@ describe("componentDependencies", () => {
 
 	});
 
+
+	it("names dotted file names with bracket notation and adds parent inits without junk objects", () => {
+
+		writeComponentFile("widget", "index.js", `export default function widget() {
+	return true;
+}`);
+
+		writeComponentFile("widget", "helper.iif.js", `(()=>{
+	return true;
+})();`);
+
+		writeComponentFile("widget", path.join("deep", "inner", "run.js"), `export default function run() {
+	return true;
+}`);
+
+		const out = componentDependencies([ "widget" ], {
+			componentLocations: [ pathToFileURL(tempRoot + path.sep) ],
+			namespace: "ui",
+			showDetails: true,
+		});
+
+		expect(Object.keys(out.widget.js_details)).toEqual([
+			"ui.widget",
+			"ui.widget.deep",
+			"ui.widget.deep.inner",
+			"ui.widget.deep.inner.run",
+			"ui.widget[\"helper.iif\"]",
+		]);
+		expect(out.widget.js_details["ui.widget.deep"]).toBe("ui.widget.deep = ui.widget.deep || {}; ");
+		expect(out.widget.js).toContain("ui.widget.deep.inner.run = function run()");
+		expect(out.widget.js).not.toContain("ui.widget.helper");
+
+	});
+
 });

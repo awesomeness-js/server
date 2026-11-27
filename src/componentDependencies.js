@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { each, getAllFiles } from "@awesomeness-js/utils";
+import { each, getAllFiles, utils } from "@awesomeness-js/utils";
 import getConfig from "./getConfig.js";
 import { extractUiRefsFromFileMemoized, readFileMemoized } from "./componentAndPageMemory.js";
 
@@ -141,33 +141,17 @@ export default function componentDependencies(
 			const fileNameFull = path.basename(normalizedPath);
 			const fileTypeArr = fileNameFull.split(".");
 			const fileType = fileTypeArr[fileTypeArr.length - 1].toLowerCase();
-			const fileName = fileTypeArr.slice(0, -1).join(".");
 
 			out[component] = out[component] || {};
 			out[component][fileType] = out[component][fileType] || {};
 
-			const dir = path.dirname(normalizedPath);
-			const dirParts = dir === "." ? [] : dir.split(path.sep);
-
-			let tail = "";
-
-			if (fileType === "js" || fileType === "css") {
-
-				if (dirParts.length > 0) {
-
-					tail = fileName === "index"
-						? "." + dirParts.join(".")
-						: `.${dirParts.join(".")}.${fileName}`;
-				
-				} else {
-
-					tail = fileName === "index" ? "" : `.${fileName}`;
-				
-				}
-			
-			}
-
-			const componentName = `${namespace}.${component}${tail}`;
+			const componentName = fileType === "js" || fileType === "css"
+				? utils.namespaceName({
+					path: normalizedPath,
+					namespace: `${namespace}.${component}`,
+					fileType: fileTypeArr[fileTypeArr.length - 1],
+				})
+				: `${namespace}.${component}`;
 
 			try {
 
@@ -287,10 +271,10 @@ export default function componentDependencies(
 					
 					} else {
 
-						fileWithImportsStripped = fileWithImportsStripped.replace(
-							"export default ",
-							`${componentName} = `
-						);
+						fileWithImportsStripped = utils.exportToAssign({
+							content: fileWithImportsStripped,
+							name: componentName,
+						});
 					
 					}
 				
@@ -325,20 +309,18 @@ export default function componentDependencies(
 
 					jsKeys.forEach((key) => {
 
-						const keyParts = key.split(".");
+						utils.namespaceInits({ name: key }).split("\n").filter(Boolean).forEach((initLine) => {
 
-						for (let i = 2; i < keyParts.length; i++) {
-
-							const parentPath = keyParts.slice(0, i).join(".");
+							const parentPath = initLine.slice(0, initLine.indexOf(" = "));
 
 							if (!files[parentPath]) {
 
-								files[parentPath] = `${parentPath} = ${parentPath} || {}; `;
-							
+								files[parentPath] = `${initLine} `;
+
 							}
-						
-						}
-					
+
+						});
+
 					});
 				
 				}

@@ -4,7 +4,7 @@ import { existsSync } from "fs";
 
 import componentDependencies from "./componentDependencies.js";
 import pageInfo from "./pageInfo.js";
-import { each, md5, combineFiles } from "@awesomeness-js/utils";
+import { each, md5, combineFiles, utils } from "@awesomeness-js/utils";
 import getConfig from "./getConfig.js";
 import { extractUiRefsFromFileMemoized, extractUiRefsMemoized } from "./componentAndPageMemory.js";
 
@@ -35,95 +35,6 @@ export default async function fetchPage(
 			: awesomenessConfig.siteDir__URL;
 
 	const sitePagesRoot = path.join(sitesRootPath, awesomenessRequest.site, "pages");
-	const emittedNamespaces = new Set();
-
-	function pageFn(filePath){
-
-		// make file path relative to ".../sites/<site>/pages/"
-		let rel = path.relative(sitePagesRoot, filePath);
-
-		// normalize to posix-style so splitting works on Windows + *nix
-		rel = rel.split(path.sep).join("/");
-
-		// remove extension and split on /js/
-		const parts = rel.replace(/\.js$/i, "").split("/js/");
-
-		const pagePath = parts[0] || "";
-		const fnPath = (parts[1] || "").split("/").filter(Boolean).join(".");
-
-		const pageNamespace = `${pageNamespaceBase}.${pagePath.split("/").filter(Boolean).join(".")}`;
-		const pageFnName = `${pageNamespace}.${fnPath}`;
-
-		return pageFnName;
-		
-	}
-
-	function getPageNamespace(fnName){
-
-		// remove the last part to get the namespace
-		const parts = fnName.split(".");
-
-
-		if (parts.length > 1) {
-
-			return parts.slice(0, -1).join(".");
-		
-		} else {
-
-			return null;
-		
-		}
-		
-	}
-
-	function isValidIdentifier(name) {
-
-		// Valid JS identifier: starts with letter, $, or _, and contains only letters, numbers, $, _
-		return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name);
-	
-	}
-
-	function pageNamespaceInit(pageFnName) {
-
-		const parts = pageFnName.split(".");
-		const inits = [];
-
-
-		for (let i = 2; i < parts.length - 1; i++) {
-
-			let expr = parts[0];
-
-
-			for (let j = 1; j <= i; j++) {
-
-				const p = parts[j];
-
-
-				if (isValidIdentifier(p)) {
-
-					expr += "." + p;
-			
-				} else {
-
-					expr += `["${p}"]`;
-			
-				}
-		
-			}
-
-			if (!emittedNamespaces.has(expr)) {
-
-				inits.push(`${expr} = ${expr} || {};`);
-				emittedNamespaces.add(expr);
-
-			}
-	
-		}
-
-	
-		return inits.join("\n");
-
-	}
 
 	function collectComponentsFromPageFiles() {
 
@@ -280,40 +191,30 @@ export default async function fetchPage(
 
 			let js = "";
 
+			const pageNamespace = utils.namespaceName({
+				path: path.relative(sitePagesRoot, path.dirname(jsPath)),
+				namespace: pageNamespaceBase,
+				fileType: null,
+				indexIsParent: false,
+			});
+			const pageName = awesomenessConfig?.pageImportName || "PAGE";
+
 			js += combineFiles(jsPath, "js", {
+				namespace: pageNamespace,
+				indexIsParent: false,
 				processContent: ({
-					content, path 
+					content, path: filePath 
 				}) => {
 
-					const fnName = pageFn(path);
-					const namespaceInit = pageNamespaceInit(fnName);
+					const folderNamespace = utils.namespaceName({
+						path: path.relative(jsPath, path.dirname(filePath)),
+						namespace: pageNamespace,
+						fileType: null,
+						indexIsParent: false,
+					});
 
-					content = content.replaceAll(`import ui from '#ui';`, "");
-					content = content.replaceAll(`import ui from "#ui";`, "");
+					return content.replaceAll(pageName, folderNamespace);
 
-					const pageName = awesomenessConfig?.pageImportName || "PAGE";
-
-					content = content.replaceAll(`import ${pageName} from '../${pageName}.js';`, "");
-					content = content.replaceAll(`import ${pageName} from "../${pageName}.js";`, "");
-
-					content = content.replaceAll("export default function", `${fnName} = function`);
-					content = content.replaceAll("export default async function", `${fnName} = async function`);
-					content = content.replaceAll("export default async", `${fnName} = async`);
-					content = content.replaceAll("export default", `${fnName} =`);
-					
-					const nameSpace = getPageNamespace(fnName);
-
-					content = content.replaceAll(pageName, nameSpace);
-
-					if (namespaceInit) {
-
-						content = `${namespaceInit}\n${content}`;
-					
-					}
-
-					return content; 
-					
-				
 				},
 			});
 
